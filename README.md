@@ -1,7 +1,42 @@
-# Vue 3 + Vite
+# glassmorphism论坛
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+玻璃态论坛？？
 
 ## Recommended IDE Setup
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+- [VS Code](https://code.visualstudio.com/) + [Volar] + [Vue 3]  + [naiveui]
+
+## 开发中的计划
+
+ - [ ] 自适应（目标有些遥远）
+
+ - [ ] 注册登陆页面（目前就只有预览图那个界面）
+
+ - [ ] 暗黑模式切换（这个应该有些麻烦）
+
+ - [ ] 发帖子，评论查看(计划是点了评论，右栏显示评论信息)
+
+ - [ ] 可以添加自定义文件夹（左边第二栏）
+
+ - [ ] 背景优化（目前这个b站直接偷的。。。）
+
+ - [ ] 搜索功能（这个应该不难，对接数据库就完事了）
+
+ - [ ] 增加更多类型的帖子（好像也想不到其他类型了）
+
+ - [ ] 右边热榜美化（或者换广告展示？）
+
+ - [ ] 左栏美化（想不到啥好点子）
+
+ - [ ] 用户美化配置（每个人可以完全定制ui的颜色）
+
+ - [ ] 玻璃通知（一点要做好看）
+
+   
+
+## 预览图
+
+- (https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+
+[![jgXEIs.png](https://s1.ax1x.com/2022/07/12/jgXEIs.png)](https://imgtu.com/i/jgXEIs)
+[![jgXZin.png](https://s1.ax1x.com/2022/07/12/jgXZin.png)](https://imgtu.com/i/jgXZin)
