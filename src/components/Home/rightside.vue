@@ -1,29 +1,27 @@
 <template>
-  <div class="rightside">
-    <div class="digital">
-      数码热榜
-      <ol>
-        <li v-for="(item, index) in digitalList" :key="index">
-          <span
-            ><n-ellipsis style="max-width: 100px">{{
-              item.name
-            }}</n-ellipsis></span
-          ><span class="qu">{{ item.quantity }}</span>
-        </li>
-      </ol>
-    </div>
-    <div class="label">
-      话题热榜
-      <ol>
-        <li v-for="(item, index) in labellList" :key="index">
-          <span
-            ><n-ellipsis style="max-width: 100px">{{
-              item.name
-            }}</n-ellipsis></span
-          ><span class="qu">{{ item.quantity }}</span>
-        </li>
-      </ol>
-    </div>
+  <div class="digital">
+    数码热榜
+    <ol>
+      <li v-for="(item, index) in digitalList" :key="index">
+        <span
+          ><n-ellipsis style="max-width: 100px">{{
+            item.name
+          }}</n-ellipsis></span
+        ><span class="qu">{{ item.quantity }}</span>
+      </li>
+    </ol>
+  </div>
+  <div class="label">
+    话题热榜
+    <ol>
+      <li v-for="(item, index) in labellList" :key="index">
+        <span
+          ><n-ellipsis style="max-width: 100px">{{
+            item.name
+          }}</n-ellipsis></span
+        ><span class="qu">{{ item.quantity }}</span>
+      </li>
+    </ol>
   </div>
 </template>
 <script setup>
@@ -56,21 +54,7 @@ const labellList = ref([
 </script>
 
 <style scoped>
-.rightside {
-  grid-area: rightside;
-  background: rgba(255, 255, 255, 0.2);
-  position: fixed;
-  right: 12vw;
-  top: 4.5rem;
-  z-index: 9999;
-  width: 16vw;
-  height: 88vh;
-  border-radius: 0px 25px 25px 0px;
-  border-style: solid solid solid none;
-  border-width: 2px;
-  border-color: #fff;
-}
-.rightside div {
+div {
   padding: 10px;
   font-size: 1.2rem;
 }
