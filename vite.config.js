@@ -11,6 +11,7 @@ export default defineConfig({
       resolvers: [NaiveUiResolver()],
     }),
   ],
+  base: process.env.NODE_ENV === "production" ? "./" : "/",
   server: {
     host: "127.0.0.1",
     port: 3000,

@@ -94,5 +94,4 @@ def judge():
             return {"code":200,"msg":"没有该账号","state":True}
 
 if __name__ == "__main__":
-    
     app.run(debug=True)

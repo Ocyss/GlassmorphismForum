@@ -19,12 +19,11 @@ const { proxy } = getCurrentInstance();
 const PostData = ref([]);
 
 onMounted(() => {
-  // proxy.$axios.get("http://localhost:5000/getPostList").then(function (result) {
-  //   for (let d in result.data.data) {
-  //     console.log(result.data.data[d]);
-  //     PostData.value.push(result.data.data[d]);
-  //   }
-  // });
+  proxy.$axios.get("/api/getPostList").then(function (result) {
+    for (let d in result.data.data) {
+      PostData.value.push(result.data.data[d]);
+    }
+  });
 });
 </script>
 
