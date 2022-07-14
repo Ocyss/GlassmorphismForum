@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
+    "pinia": "^2.0.0-rc.10",
     "vue": "^3.2.25",
     "vue-cookies": "^1.8.1",
     "vue-resource": "^1.5.3",

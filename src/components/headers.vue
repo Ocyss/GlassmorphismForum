@@ -23,22 +23,31 @@
         <MailMultiple16Filled />
       </n-icon>
 
-      <div class="personal">
-        <n-avatar
-          round
-          :size="30"
-          src="https://assets.paopao.info/public/avatar/55/0a/ce/15/75dd-4bec-be1d-125fd1bbdfb7.png"
-        />
-        <div class="name">Qiudie</div>
+      <div class="personal" v-if="internalData.$cookies.get('islo') != null">
+        <n-avatar round :size="30" :src="uinfo.avatar" />
+
+        <div class="name">{{ uinfo.name }}</div>
+        <h1>&nbsp&nbsp&nbsp&nbsp</h1>
+        <n-button @click="sign" type="error" size="tiny"> 退出登陆 </n-button>
       </div>
 
-      <div>
-        <button @click="showModal = true"><h1>有本事点我</h1></button>
+      <div class="lore" v-else>
+        <n-button
+          round
+          @click="showModal = true"
+          text-color="#f72585"
+          strong
+          size="large"
+          color="rgba(86,11,173,0.2)"
+        >
+          > 登陆&注册 &lt;
+        </n-button>
+
         <n-modal v-model:show="showModal">
           <div class="loginBox">
             <n-tabs size="large" justify-content="space-evenly">
               <n-tab-pane name="signin" tab="登录">
-                <n-collapse-transition :show="loginlogshow">
+                <n-collapse-transition :show="true">
                   <h3 style="color: #ff0000">{{ loginlog }}</h3>
                 </n-collapse-transition>
                 <n-form
@@ -81,7 +90,7 @@
                 </n-form>
               </n-tab-pane>
               <n-tab-pane name="signup" tab="注册">
-                <n-collapse-transition :show="registerlogshow">
+                <n-collapse-transition :show="true">
                   <h3 style="color: #ff0000">{{ registerlog }}</h3>
                 </n-collapse-transition>
                 <n-form
@@ -96,6 +105,7 @@
                       placeholder="输入账号"
                       :maxlength="16"
                       round
+                      @blur="userrepeat"
                     />
                   </n-form-item>
                   <n-form-item label="密码" path="pswd">
@@ -152,17 +162,29 @@ import {
 import axios from "axios";
 import { ref } from "vue";
 import { useMessage } from "naive-ui";
+import { getCurrentInstance } from "vue";
+import userInfo from "../store/userInfo";
+
 window.$message = useMessage();
+const internalInstance = getCurrentInstance();
+const internalData = internalInstance.appContext.config.globalProperties;
+const uinfo = userInfo();
 let theme = ref(null);
 let showModal = ref(false);
-
 let loginformRef = ref(null);
 let loginlog = ref(null);
 let loginformValue = ref({
   user: "admin",
   pswd: "admin",
 });
-let loginlogshow = ref(false);
+
+let registerformRef = ref(null);
+let registerlog = ref(null);
+let registerformValue = ref({
+  user: "",
+  pswd: "",
+  pswd2: "",
+});
 
 function login() {
   let logindata = new FormData();
@@ -175,22 +197,19 @@ function login() {
   }).then(function (response) {
     if (response.data.code != 200) {
       loginlog.value = response.data.msg;
-      loginlogshow.value = true;
     } else {
       showModal.value = false;
       window.$message.success(`登陆成功！欢迎回来 ${response.data.data.name}`);
+      $cookies.config("1m"); //一个月
+      // 设置cookies
+      $cookies.set("islo", true);
+      $cookies.set("token", response.data.token);
+      $cookies.set("userid", response.data.data.id);
+      console.log(response.data.data);
+      uinfo.setUser(response.data.data);
     }
   });
 }
-
-let registerformRef = ref(null);
-let registerlog = ref(null);
-let registerformValue = ref({
-  user: "",
-  pswd: "",
-  pswd2: "",
-});
-let registerlogshow = ref(false);
 
 function register() {
   if (verify() == true) {
@@ -204,9 +223,7 @@ function register() {
     }).then(function (response) {
       if (response.data.code != 200) {
         registerlog.value = response.data.msg;
-        registerlogshow.value = true;
       } else {
-        showModal.value = false;
         window.$message.success(`注册成功！ ${registerformValue.value.user}`);
       }
     });
@@ -216,11 +233,35 @@ function register() {
 function verify() {
   if (registerformValue.value.pswd != registerformValue.value.pswd2) {
     registerlog.value = "两次密码输入不一致";
-    registerlogshow.value = true;
     return false;
   } else {
+    registerlog.value = response.data.data.name;
     return true;
   }
+}
+
+function userrepeat() {
+  var data = axios({
+    url: "/api/judge",
+    method: "get",
+    params: { type: "user", data: registerformValue.value.user },
+  }).then(function (response) {
+    if (response.data.code != 200) {
+      registerlog.value = response.data.msg;
+    } else {
+      registerlog.value = response.data.data.name;
+    }
+  });
+}
+
+function sign() {
+  // window.$message.success(`再见~~ ${response.data.data.name}`);
+  $cookies.config("0"); //一个月
+  // 设置cookies
+  if ($cookies.isKey("islo")) {
+    $cookies.remove("islo");
+  }
+  location.reload();
 }
 </script>
 
