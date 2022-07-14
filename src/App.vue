@@ -1,8 +1,10 @@
 <template>
-  <headers />
+  <n-message-provider>
+    <headers />
+  </n-message-provider>
   <router-view></router-view>
-  <router-link o="/">Home</router-link> |
-  <router-link :key="index" to="/about">About</router-link>
+  <router-link to="/">Home</router-link> |
+  <router-link to="/about">About</router-link>
 </template>
 
 <script setup>

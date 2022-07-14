@@ -1,10 +1,14 @@
 <template>
   <div class="post">
     <div class="avatar">
+      <n-avatar round :size="30" v-if="props.pd.avatar == null"
+        >{{ props.pd.name }}
+      </n-avatar>
       <n-avatar
         round
         :size="30"
-        :src="props.pd.Tx"
+        v-else
+        :src="props.pd.avatar"
         lazy
         :intersection-observer-options="{
           root: '#image-scroll-container',
@@ -17,7 +21,9 @@
         <div class="time">{{ props.pd.time }}</div>
       </div>
       <div class="content">
-        {{ props.pd.content }}
+        <n-ellipsis :line-clamp="5" :tooltip="false">
+          {{ props.pd.content }}
+        </n-ellipsis>
       </div>
       <div class="pictureGroup">
         <n-image-group>

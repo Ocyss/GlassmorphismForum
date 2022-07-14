@@ -13,7 +13,7 @@
       精选
     </div>
     <div>
-      <n-icon size="16" :tag="i">
+      <n-icon size="16" tag="i">
         <Star24Filled />
       </n-icon>
       关注

@@ -14,8 +14,18 @@
 import leftside from "../components/Home/leftside.vue";
 import rightside from "../components/Home/rightside.vue";
 import content from "../components/Home/content.vue";
+import { ref, onMounted, getCurrentInstance } from "vue";
+const { proxy } = getCurrentInstance();
+const PostData = ref([]);
 
-import PostData from "../assets/PostData.json";
+onMounted(() => {
+  // proxy.$axios.get("http://localhost:5000/getPostList").then(function (result) {
+  //   for (let d in result.data.data) {
+  //     console.log(result.data.data[d]);
+  //     PostData.value.push(result.data.data[d]);
+  //   }
+  // });
+});
 </script>
 
 <style scoped>
