@@ -38,3 +38,5 @@
 
 [![jgXEIs.png](https://s1.ax1x.com/2022/07/12/jgXEIs.png)](https://imgtu.com/i/jgXEIs)
 [![jgXZin.png](https://s1.ax1x.com/2022/07/12/jgXZin.png)](https://imgtu.com/i/jgXZin)
+[![j4ljTP.png](https://s1.ax1x.com/2022/07/15/j4ljTP.png)](https://imgtu.com/i/j4ljTP)
+[![j4lXwt.png](https://s1.ax1x.com/2022/07/15/j4lXwt.png)](https://imgtu.com/i/j4lXwt)
