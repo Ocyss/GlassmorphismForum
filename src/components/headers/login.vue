@@ -176,6 +176,7 @@ function register() {
         registerlog.value = response.data.msg;
       } else {
         window.$message.success(`注册成功！ ${registerformValue.value.user}`);
+        showModal.value = false;
       }
     });
   }
@@ -186,7 +187,7 @@ function verify() {
     registerlog.value = "两次密码输入不一致";
     return false;
   } else {
-    registerlog.value = response.data.data.name;
+    registerlog.value = "";
     return true;
   }
 }
@@ -200,7 +201,7 @@ function userrepeat() {
     if (response.data.code != 200) {
       registerlog.value = response.data.msg;
     } else {
-      registerlog.value = response.data.data.name;
+      registerlog.value = "";
     }
   });
 }
