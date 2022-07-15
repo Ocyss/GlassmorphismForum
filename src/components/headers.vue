@@ -42,7 +42,6 @@
         >
           > 登陆&注册 &lt;
         </n-button>
-
         <n-modal v-model:show="showModal">
           <div class="loginBox">
             <n-tabs size="large" justify-content="space-evenly">
@@ -163,12 +162,14 @@ import axios from "axios";
 import { ref } from "vue";
 import { useMessage } from "naive-ui";
 import { getCurrentInstance } from "vue";
-import userInfo from "../store/userInfo";
+import { userInfo } from "../store/userInfo";
+const uinfo = userInfo();
+console.log(uinfo);
 
 window.$message = useMessage();
 const internalInstance = getCurrentInstance();
 const internalData = internalInstance.appContext.config.globalProperties;
-const uinfo = userInfo();
+
 let theme = ref(null);
 let showModal = ref(false);
 let loginformRef = ref(null);
@@ -187,13 +188,10 @@ let registerformValue = ref({
 });
 
 function login() {
-  let logindata = new FormData();
-  logindata.append("user", loginformValue.value.user);
-  logindata.append("pswd", loginformValue.value.pswd);
   var data = axios({
     url: "/api/login",
     method: "post",
-    data: logindata,
+    data: loginformValue.value,
   }).then(function (response) {
     if (response.data.code != 200) {
       loginlog.value = response.data.msg;
@@ -213,13 +211,10 @@ function login() {
 
 function register() {
   if (verify() == true) {
-    let registerdata = new FormData();
-    registerdata.append("user", registerformValue.value.user);
-    registerdata.append("pswd", registerformValue.value.pswd);
     var data = axios({
       url: "/api/register",
       method: "post",
-      data: registerdata,
+      data: registerformValue.value,
     }).then(function (response) {
       if (response.data.code != 200) {
         registerlog.value = response.data.msg;

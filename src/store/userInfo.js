@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 
-const userInfo = defineStore("counter", {
+export const userInfo = defineStore("storeUser", {
+  id: "user",
   state: () => {
     return {
       uid: -1,
@@ -28,6 +29,13 @@ const userInfo = defineStore("counter", {
       this.token = data.token;
     },
   },
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        key: "user",
+        storage: localStorage,
+      },
+    ],
+  },
 });
-
-export default userInfo;

@@ -49,8 +49,8 @@ def getToken(id,user,name,permission):
 
 @app.route('/login/',methods=["POST"])
 def login():
-    user = request.form.get("user")
-    pswd = request.form.get("pswd")
+    user = request.json.get("user")
+    pswd = request.json.get("pswd")
     if cursor.execute("SELECT * FROM `user` WHERE `user`=%s",(user)):
         data = cursor.fetchall()[0]
         if check_password_hash(data['password'],pswd):
@@ -70,8 +70,8 @@ def getPost():
 
 @app.route('/register/',methods=["POST"])
 def register():
-    user = request.form.get("user")
-    password = generate_password_hash(request.form.get("pswd"))
+    user = request.json.get("user")
+    password = generate_password_hash(request.json.get("pswd"))
     name=user
     sql = "insert into user(user,password,name) values (%s,%s,%s)"
     if cursor.execute(sql, (user, password, name)):
@@ -92,6 +92,14 @@ def judge():
             return {"code":301,"msg":"已经有该账号了！！","state":False}
         else:
             return {"code":200,"msg":"没有该账号","state":True}
+
+
+@app.route('/operate/',methods=["GET","POST"])
+def operate():
+    data = request.json
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
