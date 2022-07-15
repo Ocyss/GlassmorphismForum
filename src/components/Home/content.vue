@@ -1,7 +1,10 @@
 <template>
   <div class="post">
     <div class="avatar">
-      <n-avatar round :size="30" v-if="props.pd.avatar == null"
+      <n-avatar
+        round
+        :size="30"
+        v-if="(props.pd.avatar == null) | (props.pd.avatar == '')"
         >{{ props.pd.name }}
       </n-avatar>
       <n-avatar
@@ -9,6 +12,7 @@
         :size="30"
         v-else
         :src="props.pd.avatar"
+        fallback-src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
         lazy
         :intersection-observer-options="{
           root: '#image-scroll-container',
@@ -18,12 +22,17 @@
     <div class="main">
       <div class="information">
         <div class="name">{{ props.pd.name }}</div>
-        <div class="time">{{ props.pd.time }}</div>
+        <div class="time">
+          <n-time
+            :time="props.pd.post_time"
+            unix
+            type="relative"
+            time-zone="Asia/Shanghai"
+          />
+        </div>
       </div>
       <div class="content">
-        <n-ellipsis :line-clamp="5" :tooltip="false">
-          {{ props.pd.content }}
-        </n-ellipsis>
+        {{ props.pd.content }}
       </div>
       <div class="pictureGroup">
         <n-image-group>
@@ -44,26 +53,18 @@
       <div class="operation">
         <div @click="actionClick('zan')">
           <n-icon size="20">
-            <ThumbLike16Regular v-if="zans" />
-            <ThumbLike16Filled v-else /> </n-icon
+            <ThumbLike16Filled v-if="zans" />
+            <ThumbLike16Regular v-else /> </n-icon
           >{{ zan }}
         </div>
-        <div @click="actionClick('cai')">
-          <n-icon size="20">
-            <ThumbDislike16Regular v-if="cais" />
-            <ThumbDislike16Filled v-else /> </n-icon
-          >{{ cai }}
-        </div>
         <div @click="actionClick('plun')">
-          <n-icon size="20">
-            <Comment16Regular v-if="pluns" />
-            <Comment16Filled v-else /> </n-icon
-          >{{ plun }}
+          <n-icon size="20"> <Comment16Regular /></n-icon>
+          {{ plun }}
         </div>
         <div @click="actionClick('scang')">
           <n-icon size="20">
-            <Star16Regular v-if="scangs" />
-            <Star16Filled v-else /> </n-icon
+            <Star16Filled v-if="scangs" />
+            <Star16Regular v-else /> </n-icon
           >{{ scang }}
         </div>
       </div>
@@ -83,39 +84,53 @@ import {
   Comment16Filled,
 } from "@vicons/fluent";
 import { ref } from "vue";
-
+import axios from "axios";
+import { userInfo } from "../../store/userInfo";
+import { useMessage } from "naive-ui";
+const uinfo = userInfo();
+const message = useMessage();
 const props = defineProps(["pd"]);
 
-const zan = ref(Math.ceil(Math.random() * 400));
-const cai = ref(Math.ceil(Math.random() * 400));
-const plun = ref(Math.ceil(Math.random() * 400));
-const scang = ref(Math.ceil(Math.random() * 400));
-const zans = ref(true);
-const cais = ref(true);
-const pluns = ref(true);
-const scangs = ref(true);
+const zan = ref(props.pd.zan_num);
+const scang = ref(props.pd.scang_num);
+const zans = ref(uinfo.uid in props.pd.zan);
+const scangs = ref(uinfo.uid in props.pd.scang);
+const plun = ref(0);
 
 function actionClick(type) {
-  console.log(type);
-  switch (type) {
-    case "zan":
-      zan.value++;
-      zans.value = !zans.value;
-      break;
-    case "cai":
-      cai.value++;
-      cais.value = !cais.value;
-      break;
-    case "plun":
-      plun.value++;
-      pluns.value = !pluns.value;
-
-      break;
-    case "scang":
-      scang.value++;
-      scangs.value = !scangs.value;
-      break;
-  }
+  const operateData = {
+    post_userid: props.pd.userid,
+    postid: props.pd.id,
+    type: type,
+    isCancel: type == "zan" ? zans.value : scangs.value,
+  };
+  var data = axios({
+    url: "/api/operate",
+    method: "post",
+    data: operateData,
+  }).then(function (response) {
+    if (response.data.code != 200) {
+      message.error(response.data.msg);
+    } else {
+      if (response.data.ty == "add") {
+        if (type == "zan") {
+          zan.value++;
+          zans.value = true;
+        } else if (type == "scang") {
+          scang.value++;
+          scangs.value = true;
+        }
+      } else if (response.data.ty == "re") {
+        if (type == "zan") {
+          zan.value--;
+          zans.value = false;
+        } else if (type == "scang") {
+          scang.value--;
+          scangs.value = false;
+        }
+      }
+    }
+  });
 }
 </script>
 

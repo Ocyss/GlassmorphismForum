@@ -2,13 +2,21 @@
   <n-message-provider>
     <headers />
   </n-message-provider>
-  <router-view></router-view>
-  <router-link to="/">Home</router-link> |
-  <router-link to="/about">About</router-link>
+
+  <n-config-provider :locale="locale" :date-locale="dateLocale">
+    <router-view></router-view>
+    <router-link to="/">Home</router-link> |
+    <router-link to="/about">About</router-link>
+  </n-config-provider>
 </template>
 
 <script setup>
+import { ref } from "vue";
 import headers from "./components/headers.vue";
+import { zhCN, dateZhCN } from "naive-ui";
+
+const locale = ref(zhCN);
+const dateLocale = ref(dateZhCN);
 </script>
 
 <style>

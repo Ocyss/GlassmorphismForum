@@ -1,12 +1,24 @@
 <template>
   <div class="Home">
-    <div class="leftside">
+    <div class="leftside" @click="rightContent = '热榜'">
       <leftside />
     </div>
-    <div class="content" id="image-scroll-container">
-      <content v-for="item in PostData" :key="item.id" :pd="item" />
+    <n-message-provider>
+      <div class="content" id="image-scroll-container">
+        <content
+          v-for="item in PostData"
+          :key="item.id"
+          :pd="item"
+          @click="getComment(item.id)"
+        />
+      </div>
+    </n-message-provider>
+    <div class="rightside">
+      <rightside v-if="rightContent == '热榜'" />
+      <div class="comment" v-else-if="rightContent == '评论'" :key="poid">
+        <comment :postid="poid" />
+      </div>
     </div>
-    <div class="rightside"><rightside /></div>
   </div>
 </template>
 
@@ -14,9 +26,12 @@
 import leftside from "../components/Home/leftside.vue";
 import rightside from "../components/Home/rightside.vue";
 import content from "../components/Home/content.vue";
+import comment from "../components/Home/comment.vue";
 import { ref, onMounted, getCurrentInstance } from "vue";
 const { proxy } = getCurrentInstance();
 const PostData = ref([]);
+const rightContent = ref("热榜");
+const poid = ref(null);
 
 onMounted(() => {
   proxy.$axios.get("/api/getPostList").then(function (result) {
@@ -25,6 +40,17 @@ onMounted(() => {
     }
   });
 });
+
+function getComment(postid) {
+  if (rightContent.value == "评论" && postid != poid.value) {
+    poid.value = postid;
+  } else if (rightContent.value != "评论") {
+    rightContent.value = "评论";
+    poid.value = postid;
+  } else {
+    return null;
+  }
+}
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 import json
 import datetime
-from re import T
+from re import L, T
 from matplotlib.pyplot import get
 import pymysql
 import jwt
@@ -62,11 +62,33 @@ def login():
 
 @app.route('/getPostList/')
 def getPost():
-    if cursor.execute("SELECT post.id,title,type,content,update_time,post_time,'like',imgs,gender,name,avatar FROM post,user WHERE post.userid=user.id"):
+    if cursor.execute("SELECT post.userid,post.id,title,type,content,update_time,post_time,'like',imgs,gender,name,avatar,zan,scang,zan_num,scang_num FROM post,user WHERE post.userid=user.id"):
         postdata = cursor.fetchall()
-        return {"code":200,"data":postdata}
+        for i in range(0,len(postdata)):
+            if len(postdata[i]['content']) > 400:
+                postdata[i]['content'] = postdata[i]['content'][:399]+'···'
+            postdata[i]['post_time'] = int(time.mktime(postdata[i]['post_time'].timetuple()))
+            postdata[i]['update_time'] = int(time.mktime(postdata[i]['update_time'].timetuple()))
+            postdata[i]['zan'] = json.loads(postdata[i]['zan'])
+            postdata[i]['scang'] = json.loads(postdata[i]['scang'])
+        return {"code":200,"data":json.loads(json.dumps(postdata,cls=DateEncoder))}
     else:
         return {"code":500,"msg":"没有获取到帖子数据"}
+
+@app.route('/getCommentList/',methods=["POST"])
+def getComment():
+    data = request.json
+    sql = "SELECT `comment`.id,postid,userid,content,imgs,comment_time,update_time,permission,gender,name,avatar FROM `comment`,`user` WHERE `user`.id=`comment`.userid AND postid=%s ORDER BY comment_time,`comment`.id"
+    if cursor.execute(sql,(data.get("postid"))):
+        postdata = cursor.fetchall()
+        for i in range(0,len(postdata)):
+            if len(postdata[i]['content']) > 400:
+                postdata[i]['content'] = postdata[i]['content'][:399]+'···'
+            postdata[i]['comment_time'] = int(time.mktime(postdata[i]['comment_time'].timetuple()))
+            postdata[i]['update_time'] = int(time.mktime(postdata[i]['update_time'].timetuple()))
+        return {"code":200,"data":json.loads(json.dumps(postdata,cls=DateEncoder))}
+    else:
+        return {"code":500,"msg":"没有获取到评论数据"}
 
 @app.route('/register/',methods=["POST"])
 def register():
@@ -94,9 +116,39 @@ def judge():
             return {"code":200,"msg":"没有该账号","state":True}
 
 
-@app.route('/operate/',methods=["GET","POST"])
+@app.route('/operate/',methods=["POST"])
 def operate():
     data = request.json
+    token = request.cookies.get("token")
+    try:
+        jwt_decode = jwt.decode(token, '123456', issuer='Issuer',  algorithms=['HS256'])['data']
+    except:
+        return {"code":101,"msg":"Token认证失败"}
+
+    if data.get("type") == "zan" or data.get("type") == "scang":
+        if data.get("post_userid") == jwt_decode["id"]:
+            return {"code":500,"msg":"不能对自己帖子进行操作哦！"}
+        
+        if not data.get("isCancel"): #添加
+            sql = f"UPDATE post set {data.get('type')}=JSON_INSERT({data.get('type')}, '$.\"%s\"','%s' ),{data.get('type')}_num={data.get('type')}_num+1 WHERE id=%s" # Key为用户id,value为时间戳
+
+            if cursor.execute(sql,(jwt_decode["id"],int(time.time()),data.get("postid"))):
+                conn.commit()
+                return {"code":200,"msg":f"{data.get('type')}添加成功","ty":"add"}
+            else:
+                {"code":301,"msg":f"{data.get('type')} 数据库未知操作错误！"}
+        
+        elif data.get("isCancel"): #取消
+            sql = f"UPDATE post set {data.get('type')}=json_remove({data.get('type')}, '$.\"%s\"'),{data.get('type')}_num={data.get('type')}_num-1 WHERE id=%s" # Key为用户id,value为时间戳
+            if cursor.execute(sql,(jwt_decode["id"],data.get("postid"))):
+                conn.commit()
+                return {"code":200,"msg":f"{data.get('type')}取消成功","ty":"re"}
+            else:
+                {"code":301,"msg":f"{data.get('type')} 数据库未知操作错误！"}
+
+
+    elif data.get("type") == "plun":
+        pass
 
 
 
