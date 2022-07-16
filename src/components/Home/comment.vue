@@ -50,10 +50,7 @@
       class="pagination"
     />
   </div>
-  <div class="postComments">
-    <editor class="editor" />
-    <!-- <n-input type="textarea" maxlength="300" show-count clearable round /> -->
-  </div>
+  <div class="postComments"></div>
 </template>
 
 <style scoped>
@@ -117,7 +114,6 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { Options } from "../../store/options";
-import editor from "../editor.vue";
 const opti = Options();
 const props = defineProps(["postid"]);
 const CommentData = ref([1, 2, 3, 4, 5, 6]);

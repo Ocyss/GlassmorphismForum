@@ -29,6 +29,7 @@
         </n-icon>
       </div>
     </div>
+    <leftEditor />
   </div>
 </template>
 
@@ -43,6 +44,7 @@ import rightside from "../components/Home/rightside.vue";
 import comment from "../components/Home/comment.vue";
 import contents from "../components/Home/contents.vue";
 import { Options } from "../store/options";
+import leftEditor from "../components/Home/leftEditor.vue";
 const opti = Options();
 opti.rightContent = "热榜";
 </script>
@@ -98,5 +100,9 @@ opti.rightContent = "热榜";
   transform: translateX(50%) translateY(-50%);
   z-index: 1;
   top: 2%;
+}
+
+.editor {
+  padding: 0;
 }
 </style>

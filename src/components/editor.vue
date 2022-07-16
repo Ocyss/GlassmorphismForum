@@ -1,16 +1,16 @@
 <template>
-  <div style="border: 1px solid #ccc">
+  <div style="border: 1px solid #ccc" class="main">
     <Toolbar
       style="border-bottom: 1px solid #ccc"
       :editor="editorRef"
       :defaultConfig="toolbarConfig"
-      :mode="mode"
+      mode="default"
     />
     <Editor
       style="height: 500px; overflow-y: hidden"
-      v-model="valueHtml"
-      :mode="mode"
+      mode="default"
       @onCreated="handleCreated"
+      class="ex"
     />
   </div>
 </template>
@@ -35,6 +35,11 @@ const handleCreated = (editor) => {
   editorRef.value = editor;
 };
 </script>
+
 <script setup></script>
 
-<style scoped></style>
+<style scoped>
+.main {
+  height: 100%;
+}
+</style>
