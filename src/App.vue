@@ -1,13 +1,12 @@
 <template>
   <n-message-provider>
     <headers />
+    <n-config-provider :locale="locale" :date-locale="dateLocale">
+      <router-view></router-view>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </n-config-provider>
   </n-message-provider>
-
-  <n-config-provider :locale="locale" :date-locale="dateLocale">
-    <router-view></router-view>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </n-config-provider>
 </template>
 
 <script setup>

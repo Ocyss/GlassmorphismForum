@@ -1,56 +1,50 @@
 <template>
   <div class="Home">
-    <div class="leftside" @click="rightContent = '热榜'">
+    <div class="leftside" :style="opti.leftwi">
       <leftside />
-    </div>
-    <n-message-provider>
-      <div class="content" id="image-scroll-container">
-        <content
-          v-for="item in PostData"
-          :key="item.id"
-          :pd="item"
-          @click="getComment(item.id)"
-        />
+      <div class="putAway" @click="opti.putAway" :style="opti.putAwayrig">
+        <n-icon size="28" color="#FFF" class="icon"
+          ><ChevronCircleLeft20Regular
+            v-if="opti.letstate"
+          /><ChevronCircleRight20Regular v-else />
+        </n-icon>
       </div>
-    </n-message-provider>
-    <div class="rightside">
-      <rightside v-if="rightContent == '热榜'" />
-      <div class="comment" v-else-if="rightContent == '评论'" :key="poid">
-        <comment :postid="poid" />
+    </div>
+    <contents :style="opti.contentwi" />
+    <div class="rightside" :style="opti.rightwi">
+      <rightside v-if="opti.rightContent == '热榜'" />
+      <comment
+        :postid="opti.postid"
+        v-else-if="opti.rightContent == '评论'"
+        :key="opti.postid"
+      />
+      <div
+        class="putAway"
+        v-if="opti.rightContent != '热榜'"
+        style="left: -15px"
+        @click="opti.rightContent = '热榜'"
+      >
+        <n-icon size="28" color="#FFF" class="icon"
+          ><ArrowHookUpLeft24Regular />
+        </n-icon>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import {
+  ChevronCircleLeft20Regular,
+  ChevronCircleRight20Regular,
+  ArrowHookUpLeft24Regular,
+} from "@vicons/fluent";
 import leftside from "../components/Home/leftside.vue";
 import rightside from "../components/Home/rightside.vue";
-import content from "../components/Home/content.vue";
 import comment from "../components/Home/comment.vue";
-import { ref, onMounted, getCurrentInstance } from "vue";
-const { proxy } = getCurrentInstance();
-const PostData = ref([]);
-const rightContent = ref("热榜");
-const poid = ref(null);
-
-onMounted(() => {
-  proxy.$axios.get("/api/getPostList").then(function (result) {
-    for (let d in result.data.data) {
-      PostData.value.push(result.data.data[d]);
-    }
-  });
-});
-
-function getComment(postid) {
-  if (rightContent.value == "评论" && postid != poid.value) {
-    poid.value = postid;
-  } else if (rightContent.value != "评论") {
-    rightContent.value = "评论";
-    poid.value = postid;
-  } else {
-    return null;
-  }
-}
+import contents from "../components/Home/contents.vue";
+import { Options } from "../store/options";
+const opti = Options();
+opti.rightContent = "热榜";
 </script>
 
 <style scoped>
@@ -74,30 +68,17 @@ function getComment(postid) {
 
 .leftside {
   background-color: rgba(246, 247, 246, 0.65);
-  width: 21%;
   height: 100%;
-  overflow-y: scroll;
-  scroll-behavior: smooth;
-  overscroll-behavior: contain;
+  position: relative;
+  display: flex;
 }
 
 .rightside {
   background: rgba(246, 247, 246, 0.15);
-  backdrop-filter: blur(2px);
-  width: 21%;
   height: 100%;
-  overflow-y: scroll;
-  scroll-behavior: smooth;
-  overscroll-behavior: contain;
-}
-
-.content {
-  background: rgba(246, 247, 246, 0.4);
-  width: 58%;
-  height: 100%;
-  overflow-y: scroll;
-  scroll-behavior: smooth;
-  overscroll-behavior: contain;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 ::-webkit-scrollbar {
@@ -106,5 +87,16 @@ function getComment(postid) {
 
 ::-webkit-scrollbar-thumb {
   background: rgb(255, 76, 162);
+}
+
+.putAway {
+  transition: color 0.3s var(--n-bezier), right 0.3s var(--n-bezier),
+    left 0.3s var(--n-bezier), border-color 0.3s var(--n-bezier),
+    background-color 0.3s var(--n-bezier);
+  cursor: pointer;
+  position: absolute;
+  transform: translateX(50%) translateY(-50%);
+  z-index: 1;
+  top: 2%;
 }
 </style>

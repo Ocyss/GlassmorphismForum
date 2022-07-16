@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="logo">
-      <img src="../assets/logo.png" alt="LOGO" />
+      <img src="../assets/logo150.png" alt="LOGO" />
     </div>
     <div class="searchBox">
       <n-input :style="{ width: '80%' }" />
@@ -50,21 +50,21 @@ const uinfo = userInfo();
 const internalInstance = getCurrentInstance();
 const internalData = internalInstance.appContext.config.globalProperties;
 
-let islo = ref(internalData.$cookies.get("islo") != null);
+let islo = ref(internalData.$cookies.get("token") != null);
 
 function sign() {
   // window.$message.success(`再见~~ ${response.data.data.name}`);
   $cookies.config("0"); //一个月
   // 设置cookies
-  if ($cookies.isKey("islo")) {
-    $cookies.remove("islo");
+  if ($cookies.isKey("token")) {
+    $cookies.remove("token");
   }
   uinfo.$reset();
   islo.value = false;
 }
 
 function setislo() {
-  islo.value = internalData.$cookies.get("islo") != null;
+  islo.value = internalData.$cookies.get("token") != null;
 }
 </script>
 

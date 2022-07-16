@@ -52,17 +52,17 @@
       </div>
       <div class="operation">
         <div @click="actionClick('zan')">
-          <n-icon size="20">
+          <n-icon size="20" color="rgb(90,90,90)">
             <ThumbLike16Filled v-if="zans" />
             <ThumbLike16Regular v-else /> </n-icon
           >{{ zan }}
         </div>
-        <div @click="actionClick('plun')">
+        <div @click="getComment(props.pd.id)">
           <n-icon size="20"> <Comment16Regular /></n-icon>
           {{ plun }}
         </div>
         <div @click="actionClick('scang')">
-          <n-icon size="20">
+          <n-icon size="20" color="rgb(90,90,90)">
             <Star16Filled v-if="scangs" />
             <Star16Regular v-else /> </n-icon
           >{{ scang }}
@@ -87,15 +87,28 @@ import { ref } from "vue";
 import axios from "axios";
 import { userInfo } from "../../store/userInfo";
 import { useMessage } from "naive-ui";
+import { Options } from "../../store/options";
+const opti = Options();
 const uinfo = userInfo();
 const message = useMessage();
 const props = defineProps(["pd"]);
 
 const zan = ref(props.pd.zan_num);
 const scang = ref(props.pd.scang_num);
+const plun = ref(props.pd.plun_num);
 const zans = ref(uinfo.uid in props.pd.zan);
 const scangs = ref(uinfo.uid in props.pd.scang);
-const plun = ref(0);
+
+function getComment(postid) {
+  if (opti.rightContent != "评论") {
+    opti.rightContent = "评论";
+    opti.postid = postid;
+    opti.commenttotal = plun.value;
+  } else if (opti.rightContent == "评论" && postid != opti.poid) {
+    opti.postid = postid;
+    opti.commenttotal = plun.value;
+  }
+}
 
 function actionClick(type) {
   const operateData = {

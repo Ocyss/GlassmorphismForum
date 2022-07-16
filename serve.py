@@ -60,9 +60,26 @@ def login():
         else:
             return {"code":100,"msg":"用户名或者密码错误!!"}
 
-@app.route('/getPostList/')
+@app.route('/getPostList/',methods=["POST"])
 def getPost():
-    if cursor.execute("SELECT post.userid,post.id,title,type,content,update_time,post_time,'like',imgs,gender,name,avatar,zan,scang,zan_num,scang_num FROM post,user WHERE post.userid=user.id"):
+    data = request.json
+    print(data)
+    sql = """
+    SELECT post.userid, post.id, title, type, content
+	, update_time, post_time, 'like', imgs, gender
+	, 'name', avatar, zan, scang, zan_num
+	, scang_num, plun_num
+    FROM post, user, (
+            SELECT COUNT(*) AS plun_num, postid
+            FROM `comment`
+            GROUP BY postid
+        ) plun
+    WHERE post.userid = user.id
+        AND plun.postid = post.id
+    ORDER BY post_time DESC
+    LIMIT %s, 10
+    """ 
+    if cursor.execute(sql,((data.get("limit")-1)*10)):
         postdata = cursor.fetchall()
         for i in range(0,len(postdata)):
             if len(postdata[i]['content']) > 400:
@@ -71,15 +88,26 @@ def getPost():
             postdata[i]['update_time'] = int(time.mktime(postdata[i]['update_time'].timetuple()))
             postdata[i]['zan'] = json.loads(postdata[i]['zan'])
             postdata[i]['scang'] = json.loads(postdata[i]['scang'])
-        return {"code":200,"data":json.loads(json.dumps(postdata,cls=DateEncoder))}
+        if cursor.execute("SELECT COUNT(*) AS total FROM post"):
+            total = cursor.fetchall()[0]
+        return {"code":200,"data":json.loads(json.dumps(postdata,cls=DateEncoder)),"total":total['total']}
     else:
         return {"code":500,"msg":"没有获取到帖子数据"}
 
 @app.route('/getCommentList/',methods=["POST"])
 def getComment():
     data = request.json
-    sql = "SELECT `comment`.id,postid,userid,content,imgs,comment_time,update_time,permission,gender,name,avatar FROM `comment`,`user` WHERE `user`.id=`comment`.userid AND postid=%s ORDER BY comment_time,`comment`.id"
-    if cursor.execute(sql,(data.get("postid"))):
+    sql = """
+        SELECT `comment`.id, postid, userid, content, imgs
+        , comment_time, update_time, permission, gender, name
+        , avatar
+        FROM `comment`, `user`
+        WHERE `user`.id = `comment`.userid
+            AND postid = %s
+        ORDER BY comment_time, `comment`.id
+        LIMIT %s, 10
+    """
+    if cursor.execute(sql,(data.get("postid"),(data.get("limit")-1)*10)):
         postdata = cursor.fetchall()
         for i in range(0,len(postdata)):
             if len(postdata[i]['content']) > 400:
@@ -119,6 +147,7 @@ def judge():
 @app.route('/operate/',methods=["POST"])
 def operate():
     data = request.json
+    _type = data.get("type")
     token = request.cookies.get("token")
     try:
         jwt_decode = jwt.decode(token, '123456', issuer='Issuer',  algorithms=['HS256'])['data']
@@ -130,21 +159,21 @@ def operate():
             return {"code":500,"msg":"不能对自己帖子进行操作哦！"}
         
         if not data.get("isCancel"): #添加
-            sql = f"UPDATE post set {data.get('type')}=JSON_INSERT({data.get('type')}, '$.\"%s\"','%s' ),{data.get('type')}_num={data.get('type')}_num+1 WHERE id=%s" # Key为用户id,value为时间戳
+            sql = f"UPDATE post set {_type}=JSON_INSERT({_type}, '$.\"%s\"','%s' ),{_type}_num={_type}_num+1 WHERE id=%s" # Key为用户id,value为时间戳
 
             if cursor.execute(sql,(jwt_decode["id"],int(time.time()),data.get("postid"))):
                 conn.commit()
-                return {"code":200,"msg":f"{data.get('type')}添加成功","ty":"add"}
+                return {"code":200,"msg":f"{_type}添加成功","ty":"add"}
             else:
-                {"code":301,"msg":f"{data.get('type')} 数据库未知操作错误！"}
+                {"code":301,"msg":f"{_type} 数据库未知操作错误！"}
         
         elif data.get("isCancel"): #取消
-            sql = f"UPDATE post set {data.get('type')}=json_remove({data.get('type')}, '$.\"%s\"'),{data.get('type')}_num={data.get('type')}_num-1 WHERE id=%s" # Key为用户id,value为时间戳
+            sql = f"UPDATE post set {_type}=json_remove({_type}, '$.\"%s\"'),{_type}_num={_type}_num-1 WHERE id=%s" # Key为用户id,value为时间戳
             if cursor.execute(sql,(jwt_decode["id"],data.get("postid"))):
                 conn.commit()
-                return {"code":200,"msg":f"{data.get('type')}取消成功","ty":"re"}
+                return {"code":200,"msg":f"{_type}取消成功","ty":"re"}
             else:
-                {"code":301,"msg":f"{data.get('type')} 数据库未知操作错误！"}
+                {"code":301,"msg":f"{_type} 数据库未知操作错误！"}
 
 
     elif data.get("type") == "plun":

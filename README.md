@@ -6,6 +6,8 @@
 
 - [VS Code](https://code.visualstudio.com/) + [Volar] + [Vue 3] + [naiveui]
 
+- 文本编辑器采用 wangEditor 5
+
 ## 开发中的计划
 
 - [ ] 自适应（目标有些遥远）

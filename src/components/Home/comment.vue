@@ -1,48 +1,83 @@
 <template>
-  <div class="comment" v-for="(item, index) in CommentData" :key="item.id">
-    <div class="avatar">
-      <n-avatar round :size="30" v-if="true">{{ item.name }}</n-avatar>
-      <n-avatar
-        round
-        :size="30"
-        v-else
-        :src="item.avatar"
-        fallback-src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
-        lazy
-        :intersection-observer-options="{
-          root: '#image-scroll-container',
-        }"
-      />
-      <div class="information">
-        <n-skeleton v-if="loading" width="100%" :sharp="false" />
-        <div class="name">{{ item.name }}</div>
-        <div class="time">
-          <n-time
-            :time="item.comment_time"
-            unix
-            type="relative"
-            time-zone="Asia/Shanghai"
-          />
+  <div class="commentmain">
+    <div class="comment" v-for="(item, index) in CommentData" :key="item.id">
+      <div class="avatar">
+        <n-avatar round :size="30" v-if="true">{{ item.name }}</n-avatar>
+        <n-avatar
+          round
+          :size="30"
+          v-else
+          :src="item.avatar"
+          fallback-src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
+          lazy
+          :intersection-observer-options="{
+            root: '#image-scroll-container',
+          }"
+        />
+        <div class="information">
+          <n-skeleton v-if="loading" width="100%" :sharp="false" />
+          <div class="name">{{ item.name }}</div>
+          <div class="time">
+            <n-time
+              :time="item.comment_time"
+              unix
+              type="relative"
+              time-zone="Asia/Shanghai"
+            />
+          </div>
         </div>
       </div>
+      <div class="main">
+        <n-skeleton
+          v-if="loading"
+          width="100%"
+          :height="15"
+          :sharp="false"
+          text
+          :repeat="4"
+          size="medium"
+        />
+        <div class="content">{{ item.content }}</div>
+        <div class="pictureGroup"></div>
+      </div>
     </div>
-    <div class="main">
-      <n-skeleton
-        v-if="loading"
-        width="100%"
-        :height="15"
-        :sharp="false"
-        text
-        :repeat="4"
-        size="medium"
-      />
-      <div class="content">{{ item.content }}</div>
-      <div class="pictureGroup"></div>
-    </div>
+    <n-pagination
+      v-model:page="page"
+      :page-count="parseInt(opti.commenttotal / 10) + 1"
+      :page-slot="3"
+      @update:page=""
+      size="small"
+      class="pagination"
+    />
+  </div>
+  <div class="postComments">
+    <editor class="editor" />
+    <!-- <n-input type="textarea" maxlength="300" show-count clearable round /> -->
   </div>
 </template>
 
 <style scoped>
+.postComments {
+  padding: 5px 0 0 0;
+}
+.postComments .editor {
+}
+.n-pagination {
+  margin-bottom: 10px;
+}
+</style>
+
+<style scoped>
+.commentmain {
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 .comment {
   width: 70%;
   display: flex;
@@ -81,23 +116,23 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import { userInfo } from "../../store/userInfo";
-const uinfo = userInfo();
+import { Options } from "../../store/options";
+import editor from "../editor.vue";
+const opti = Options();
 const props = defineProps(["postid"]);
 const CommentData = ref([1, 2, 3, 4, 5, 6]);
 const loading = ref(true);
+const page = ref(1);
 onMounted(() => {
   var data = axios({
     url: "/api/getCommentList",
     method: "post",
-    data: { postid: props.postid },
+    data: { postid: props.postid, limit: 1 },
   }).then(function (response) {
     if (response.data.code != 200) {
       message.error(response.data.msg);
     } else {
-      for (let i = 0; i < 7; i++) {
-        CommentData.value.splice(0, 1);
-      }
+      CommentData.value = [];
 
       for (let d in response.data.data) {
         CommentData.value.push(response.data.data[d]);
