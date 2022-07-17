@@ -1,12 +1,30 @@
-# glassmorphism 论坛
+<p align="center">
+ <img width="150px" src="https://s1.ax1x.com/2022/07/17/j5IS74.png" align="center" alt="QS论坛" />
+ <h2 align="center">QS论坛</h2>
+ <p align="center">一个玻璃态(glassmorphism)且追求简洁的论坛</p>
+</p>
 
-玻璃态论坛？？
+***
 
-## Recommended IDE Setup
+> #### 简单入门vue后的第二个实战项目，多以前端为主，python部分能用就行，以后在优化
+>
+> 有建议和问题多提issues
 
-- [VS Code](https://code.visualstudio.com/) + [Volar] + [Vue 3] + [naiveui]
+## 技术栈
 
-- 文本编辑器采用 wangEditor 5
+#### 后端：
+
+- ##### Python + Flask
+
+- ##### 数据库采用 MySQL
+
+#### 前端
+
+- ##### vite + Vue 3 + yarn
+
+- ##### UI采用 ***Naive UI***
+
+- ##### 文本编辑器采用 wangEditor 5
 
 ## 开发中的计划
 
@@ -16,7 +34,7 @@
 
 - [ ] 暗黑模式切换（这个应该有些麻烦）
 
-- [ ] 发帖子
+- [ ] 发帖子，发评论
 
 - [x] 评论查看(计划是点了评论，右栏显示评论信息)
 
@@ -26,7 +44,7 @@
 
 - [ ] 搜索功能（这个应该不难，对接数据库就完事了）
 
-- [x] 增加更多类型的帖子（有纯文图(就只能文字，然后图片下面一排),图文(文字中可穿插图),富文本(不用解释了。)）
+- [x] 增加更多类型的帖子
 
 - [ ] 右边热榜美化（或者换广告展示？）
 
