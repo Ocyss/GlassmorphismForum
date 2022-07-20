@@ -1,9 +1,26 @@
 <template>
   <div class="content" id="image-scroll-container">
-    <content v-for="item in PostData" :key="item.id" :pd="item" />
+    <n-button
+      color="rgba(138,43,226,0.7)"
+      circle
+      class="writepost"
+      @click="opti.writepost = true"
+    >
+      <template #icon>
+        <n-icon>
+          <Compose16Regular />
+        </n-icon>
+      </template>
+    </n-button>
+    <content
+      v-for="item in PostData"
+      :key="item.id"
+      :pd="item"
+      @getComment="(pid, plun) => $emit('getComment', pid, plun)"
+    />
     <n-pagination
       v-model:page="opti.page"
-      :page-count="parseInt(opti.pagetotal / 10) + 1"
+      :page-count="parseInt(opti.pagetotal / 10)"
       :page-slot="8"
       @update:page="getpost(opti.page)"
     />
@@ -11,6 +28,7 @@
 </template>
 
 <script setup>
+import { Compose16Regular } from "@vicons/fluent";
 import axios from "axios";
 import { useMessage } from "naive-ui";
 import content from "./content.vue";
@@ -55,5 +73,9 @@ onMounted(() => {
 }
 .n-pagination {
   margin-bottom: 10px;
+}
+
+.writepost {
+  margin: 10px 10px 5px 85%;
 }
 </style>

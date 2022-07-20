@@ -39,6 +39,11 @@
   resolved "https://registry.npmmirror.com/@juggle/resize-observer/-/resize-observer-3.3.1.tgz#b50a781709c81e10701004214340f25475a171a0"
   integrity sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==
 
+"@lylajs/core@0.6.8":
+  version "0.6.8"
+  resolved "https://registry.npmmirror.com/@lylajs/core/-/core-0.6.8.tgz#9ba8d1ee9f3cafa725c78be57fed4c05304d833f"
+  integrity sha512-5ReVeSJn1dflkofNdRPjzaby8OP+9DHr6+5hg+Rbmls8DLiVM8ULcM9HaPEyQQgNM6oEwxgRqKCOtZ6RqwOjNQ==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmmirror.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -1141,6 +1146,13 @@ lowercase-keys@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmmirror.com/lowercase-keys/-/lowercase-keys-2.0.0.tgz#2603e78b7b4b0006cbca2fbcc8a3202558ac9479"
   integrity sha512-tqNXrS78oMOE73NMxK4EMLQsQowWf8jKooH9g7xPavRT706R6bkQJ6DY2Te7QukaZsulxa30wQ7bk0pm4XiHmA==
+
+lyla@^0.6.8:
+  version "0.6.8"
+  resolved "https://registry.npmmirror.com/lyla/-/lyla-0.6.8.tgz#bde13ace2dd87f593ac44c6edd6db1154d8b9553"
+  integrity sha512-xYEhZ//3uirigp4FHZytxLG2OsPNzRFRoRRre/pGCbMrX0o5byvylmgGVfaomITY5MoLPyjWy/2JiEZSlcPONg==
+  dependencies:
+    "@lylajs/core" "0.6.8"
 
 magic-string@^0.25.7:
   version "0.25.9"

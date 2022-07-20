@@ -3,8 +3,6 @@
     <headers />
     <n-config-provider :locale="locale" :date-locale="dateLocale">
       <router-view></router-view>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
     </n-config-provider>
   </n-message-provider>
 </template>
@@ -59,5 +57,26 @@ body {
   100% {
     background-position: 100% 100%;
   }
+}
+
+.overallContent {
+  position: absolute;
+  top: 4.5rem;
+  left: 12vw;
+  width: 76vw;
+  min-width: 750px;
+  height: 88vh;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+  background: rgba(246, 247, 246, 0.35);
+  display: flex;
+  align-items: center;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
 }
 </style>

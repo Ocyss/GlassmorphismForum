@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <div class="logo">
+    <div class="logo" @click="router.push('/')">
       <img src="../assets/logo150.png" alt="LOGO" />
     </div>
     <div class="searchBox">
@@ -17,7 +17,6 @@
       <n-icon size="28">
         <MailMultiple16Filled />
       </n-icon>
-
       <div class="personal" v-if="islo">
         <n-avatar
           round
@@ -42,10 +41,11 @@ import {
   WeatherSunny32Filled,
   WeatherMoon28Filled,
 } from "@vicons/fluent";
-import { ref } from "vue";
+import { ref, getCurrentInstance } from "vue";
 import login from "./headers/login.vue";
-import { getCurrentInstance } from "vue";
 import { userInfo } from "../store/userInfo";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const uinfo = userInfo();
 const internalInstance = getCurrentInstance();
 const internalData = internalInstance.appContext.config.globalProperties;
@@ -87,7 +87,12 @@ function setislo() {
 .searchBox {
   width: 280px;
 }
-
+.logo {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  z-index: 99;
+}
 .logo img {
   width: 50px;
   height: 50px;

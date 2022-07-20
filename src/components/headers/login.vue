@@ -119,7 +119,7 @@
 
 <script setup>
 import axios from "axios";
-import { ref } from "vue";
+import { ref, getCurrentInstance } from "vue";
 
 import { useMessage } from "naive-ui";
 import { userInfo } from "../../store/userInfo";
@@ -142,6 +142,8 @@ let registerformValue = ref({
   pswd2: "",
 });
 
+let { ctx: that } = getCurrentInstance();
+
 function login() {
   var data = axios({
     url: "/api/login",
@@ -155,19 +157,19 @@ function login() {
       window.$message.success(`登陆成功！欢迎回来 ${response.data.data.name}`);
       $cookies.config("1m"); //一个月
       // 设置cookies
-      $cookies.set("islo", true);
       $cookies.set("token", response.data.token);
       $cookies.set("userid", response.data.data.id);
       console.log(response.data.data);
-      uinfo.setUser(response.data.data);
+      uinfo.setUser(response.data.data, response.data.token);
       emit("setislo");
+      that.$forceUpdate();
     }
   });
 }
 
 function register() {
   if (verify() == true) {
-    var data = axios({
+    axios({
       url: "/api/register",
       method: "post",
       data: registerformValue.value,

@@ -1,5 +1,5 @@
 <template>
-  <div class="post">
+  <div class="post" @click="jumpTo">
     <div class="avatar">
       <n-avatar
         round
@@ -12,7 +12,7 @@
         :size="30"
         v-else
         :src="props.pd.avatar"
-        fallback-src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
+        fallback-src="/files/liekai.png"
         lazy
         :intersection-observer-options="{
           root: '#image-scroll-container',
@@ -31,6 +31,9 @@
           />
         </div>
       </div>
+      <div class="title">
+        <h3>{{ props.pd.title }}</h3>
+      </div>
       <div class="content">
         {{ props.pd.content }}
       </div>
@@ -40,9 +43,12 @@
             <n-image
               v-for="(src, index) in props.pd.imgs"
               :key="index"
-              hidden="100"
+              width="100"
+              height="100"
+              object-fit="contain"
               lazy
-              :src="'https://picsum.photos/id/4/100/100'"
+              fallback-src="/files/liekai.png"
+              :src="src"
               :intersection-observer-options="{
                 root: '#image-scroll-container',
               }"
@@ -51,17 +57,17 @@
         </n-image-group>
       </div>
       <div class="operation">
-        <div @click="actionClick('zan')">
+        <div @click.stop="actionClick('zan')">
           <n-icon size="20" color="rgb(90,90,90)">
             <ThumbLike16Filled v-if="zans" />
             <ThumbLike16Regular v-else /> </n-icon
           >{{ zan }}
         </div>
-        <div @click="getComment(props.pd.id)">
-          <n-icon size="20"> <Comment16Regular /></n-icon>
+        <div @click.stop="getComment">
+          <n-icon size="20" color="rgb(90,90,90)"> <Comment16Regular /></n-icon>
           {{ plun }}
         </div>
-        <div @click="actionClick('scang')">
+        <div @click.stop="actionClick('scang')">
           <n-icon size="20" color="rgb(90,90,90)">
             <Star16Filled v-if="scangs" />
             <Star16Regular v-else /> </n-icon
@@ -83,81 +89,106 @@ import {
   Star16Filled,
   Comment16Filled,
 } from "@vicons/fluent";
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import axios from "axios";
 import { userInfo } from "../../store/userInfo";
 import { useMessage } from "naive-ui";
 import { Options } from "../../store/options";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const opti = Options();
 const uinfo = userInfo();
 const message = useMessage();
 const props = defineProps(["pd"]);
 
-const zan = ref(props.pd.zan_num);
-const scang = ref(props.pd.scang_num);
+const zan = ref(Object.keys(props.pd.zan).length);
+const scang = ref(Object.keys(props.pd.scang).length);
 const plun = ref(props.pd.plun_num);
 const zans = ref(uinfo.uid in props.pd.zan);
 const scangs = ref(uinfo.uid in props.pd.scang);
 
-function getComment(postid) {
-  if (opti.rightContent != "评论") {
-    opti.rightContent = "评论";
-    opti.postid = postid;
-    opti.commenttotal = plun.value;
-  } else if (opti.rightContent == "评论" && postid != opti.poid) {
-    opti.postid = postid;
-    opti.commenttotal = plun.value;
-  }
+function jumpTo() {
+  let routeUrl = router.resolve({
+    path: "/post",
+    query: {
+      postid: props.pd.id,
+    },
+  });
+  window.open(routeUrl.href, "_blank");
 }
 
 function actionClick(type) {
-  const operateData = {
-    post_userid: props.pd.userid,
-    postid: props.pd.id,
-    type: type,
-    isCancel: type == "zan" ? zans.value : scangs.value,
-  };
-  var data = axios({
-    url: "/api/operate",
-    method: "post",
-    data: operateData,
-  }).then(function (response) {
-    if (response.data.code != 200) {
-      message.error(response.data.msg);
-    } else {
-      if (response.data.ty == "add") {
-        if (type == "zan") {
-          zan.value++;
-          zans.value = true;
-        } else if (type == "scang") {
-          scang.value++;
-          scangs.value = true;
-        }
-      } else if (response.data.ty == "re") {
-        if (type == "zan") {
-          zan.value--;
-          zans.value = false;
-        } else if (type == "scang") {
-          scang.value--;
-          scangs.value = false;
+  console.log(uinfo.token);
+  if (uinfo.token == "") {
+    message.error("孩子你还没登陆呢，在想什么呢？？");
+  } else {
+    const operateData = {
+      post_userid: props.pd.userid,
+      postid: props.pd.id,
+      type: type,
+      isCancel: type == "zan" ? zans.value : scangs.value,
+    };
+    axios({
+      url: "/api/operate",
+      method: "post",
+      data: operateData,
+    }).then(function (response) {
+      if (response.data.code != 200) {
+        message.error(response.data.msg);
+      } else {
+        if (response.data.ty == "add") {
+          if (type == "zan") {
+            zan.value++;
+            zans.value = true;
+          } else if (type == "scang") {
+            scang.value++;
+            scangs.value = true;
+          }
+        } else if (response.data.ty == "re") {
+          if (type == "zan") {
+            zan.value--;
+            zans.value = false;
+          } else if (type == "scang") {
+            scang.value--;
+            scangs.value = false;
+          }
         }
       }
-    }
-  });
+    });
+  }
 }
+
+const YgetComment = inject("YgetComment");
+const getComment = function () {
+  YgetComment(props.pd.id, props.pd.plun_num);
+};
 </script>
 
 <style scoped>
 .post {
   width: 80%;
   /* height: 200px; */
-  margin: 20px auto;
+  margin: 10px auto;
   font-size: 0.8rem;
   background: rgb(255, 255, 255);
   display: flex;
   padding: 10px;
   padding-right: 40px;
   border-radius: 25px;
+  position: relative;
+}
+
+.post:hover::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  border: 5px solid rgba(176, 133, 232, 0.6);
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 25px;
+  box-sizing: border-box;
 }
 
 .avatar {
@@ -191,10 +222,12 @@ function actionClick(type) {
   margin-top: 12px;
 }
 
-.operation div {
+.operation > div {
   display: flex;
   align-items: center;
   cursor: pointer;
   user-select: none;
+  position: relative;
+  z-index: 99;
 }
 </style>

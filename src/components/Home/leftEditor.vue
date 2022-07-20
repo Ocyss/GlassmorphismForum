@@ -1,11 +1,10 @@
 <template>
-  <button @click="active = !active"><h1>别点我</h1></button>
   <n-drawer
-    v-model:show="active"
+    v-model:show="opit.writepost"
     :default-width="502"
     placement="left"
     resizable
-    :show-mask="false"
+    display-directive="show"
   >
     <n-drawer-content
       title="发布帖子"
@@ -15,35 +14,33 @@
         <n-popselect v-model:value="value" :options="options" trigger="click">
           <n-button>{{ value || "选择帖子类型" }}</n-button>
         </n-popselect>
-        <n-input type="text" placeholder="标题(可不写)" />
+        <n-input type="text" placeholder="标题(可不写)" v-model:value="title" />
       </div>
       <div class="allEd">
         <div class="edPureGraph" v-if="value == '纯文图'">
-          <n-input
-            type="textarea"
-            maxlength="500"
-            show-count
-            clearable
-            round
-            rows="20"
-          />
+          <PureGraph :title="title" />
         </div>
-
-        <div class="edImageText" v-else-if="value == '图文'"><h1>图文</h1></div>
-        <div class="edRichText" v-else-if="value == '富文本'"><editor /></div>
+        <div class="edImageText" v-else-if="value == '图文'">
+          <ImageText :title="title" />
+        </div>
+        <div class="edRichText" v-else-if="value == '富文本'">
+          <RichText :title="title" />
+        </div>
       </div>
-      <n-button strong secondary size="large" type="success" class="sendbutton">
-        发 射! 射! 射!
-      </n-button>
     </n-drawer-content>
   </n-drawer>
 </template>
 
 <script setup>
-import editor from "../editor.vue";
+import PureGraph from "../editor/PureGraph.vue";
+import ImageText from "../editor/ImageText.vue";
+import RichText from "../editor/RichText.vue";
 import { ref } from "vue";
-const value = ref("");
-const active = ref(true);
+import { Options } from "../../store/options";
+const opit = Options();
+const value = ref("纯文图");
+
+const title = ref("");
 const options = ref([
   {
     label: "纯文图",
@@ -69,9 +66,5 @@ const options = ref([
 .allEd {
   height: 80%;
   margin-top: 10px;
-}
-
-.sendbutton {
-  margin-left: 70%;
 }
 </style>

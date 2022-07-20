@@ -5,7 +5,6 @@ export const Options = defineStore("Options", {
   state: () => {
     return {
       letstate: true, // 侧栏打开还是关闭
-      rightContent: "热榜",
       leftwi: "width: 0%;",
       contentwi: "width: 70%;",
       rightwi: "width: 30%;",
@@ -14,6 +13,7 @@ export const Options = defineStore("Options", {
       page: 1,
       pagetotal: -1,
       commenttotal: -1,
+      writepost: false,
     };
   },
   getters: {},

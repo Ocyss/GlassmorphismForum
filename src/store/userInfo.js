@@ -17,7 +17,7 @@ export const userInfo = defineStore("storeUser", {
   },
   getters: {},
   actions: {
-    setUser(data) {
+    setUser(data, token) {
       this.uid = data.id;
       this.user = data.user;
       this.name = data.name;
@@ -26,7 +26,7 @@ export const userInfo = defineStore("storeUser", {
       this.gender = data.gender;
       this.configure = data.configure;
       this.avatar = data.avatar;
-      this.token = data.token;
+      this.token = token;
     },
   },
   persist: {

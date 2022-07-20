@@ -1,186 +1,410 @@
 import json
 import datetime
-from re import L, T
-from matplotlib.pyplot import get
+import os
 import pymysql
 import jwt
 import time
-from flask import Flask,request,make_response,jsonify
-from werkzeug.security import generate_password_hash,check_password_hash
+from flask import Flask, request, make_response, jsonify
+from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+from dbutils.pooled_db import PooledDB
 
-
-conn = pymysql.connect(
-    host='127.0.0.1',
-    port=3306,
-    user='root',
-    passwd='123456',
-    db='forum',
-    charset='utf8mb4'
-)
-cursor = conn.cursor(pymysql.cursors.DictCursor)
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 app.config['OPENAPI_VERSION'] = '3.0.2'
 app.url_map.strict_slashes = False
-class DateEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj,datetime.datetime):
-            return obj.strftime("%Y-%m-%d %H:%M:%S")
+
+
+class MysqlClient(object):
+    __pool = None
+
+    def __init__(self, mincached=10, maxcached=20, maxshared=10, maxconnections=200, blocking=True,
+                 maxusage=100, setsession=None, reset=True,
+                 host='127.0.0.1', port=3306, db='forum',
+                 user='root', passwd='123456', charset='utf8mb4'):
+        """
+        :param mincached:连接池中空闲连接的初始数量
+        :param maxcached:连接池中空闲连接的最大数量
+        :param maxshared:共享连接的最大数量
+        :param maxconnections:创建连接池的最大数量
+        :param blocking:超过最大连接数量时候的表现，为True等待连接数量下降，为false直接报错处理
+        :param maxusage:单个连接的最大重复使用次数
+        :param setsession:optional list of SQL commands that may serve to prepare
+            the session, e.g. ["set datestyle to ...", "set time zone ..."]
+        :param reset:how connections should be reset when returned to the pool
+            (False or None to rollback transcations started with begin(),
+            True to always issue a rollback for safety's sake)
+        :param host:数据库ip地址
+        :param port:数据库端口
+        :param db:库名
+        :param user:用户名
+        :param passwd:密码
+        :param charset:字符编码
+        """
+
+        if not self.__pool:
+            self.__class__.__pool = PooledDB(pymysql,
+                                             mincached, maxcached,
+                                             maxshared, maxconnections, blocking,
+                                             maxusage, setsession, reset,
+                                             host=host, port=port, db=db,
+                                             user=user, passwd=passwd,
+                                             charset=charset,
+                                             cursorclass=pymysql.cursors.DictCursor,
+                                             ping=1
+                                             )
+        self._conn = None
+        self._cursor = None
+        self.__get_conn()
+
+    def __get_conn(self):
+        self._conn = self.__pool.connection()
+        self._cursor = self._conn.cursor()
+
+    def close(self):
+        try:
+            self._cursor.close()
+            self._conn.close()
+        except Exception as e:
+            print(e)
+
+    def __execute(self, sql, param=()):
+        count = self._cursor.execute(sql, param)
+        # print(count)
+        return count
+
+    @staticmethod
+    def __dict_datetime_obj_to_str(result_dict):
+        if result_dict:
+            result_replace = {k: int(time.mktime(v.timetuple())) for k, v in result_dict.items(
+            ) if isinstance(v, datetime.datetime)}
+            result_dict.update(result_replace)
+        return result_dict
+
+    def select_one(self, sql, param=()):
+        count = self.__execute(sql, param)
+        result = self._cursor.fetchone()
+        result = self.__dict_datetime_obj_to_str(result)
+        return count, result
+
+    def select_many(self, sql, param=()):
+        count = self.__execute(sql, param)
+        result = self._cursor.fetchall()
+        [self.__dict_datetime_obj_to_str(row_dict) for row_dict in result]
+        return count, result
+
+    def execute(self, sql, param=()):
+        count = self.__execute(sql, param)
+        return count
+
+    def insert_one(self, sql, param=()):
+        count = self.__execute(sql, param)
+        result = self._conn.commit()
+        return count, result
+
+    def delete_one(self, sql, param=()):
+        count = self.__execute(sql, param)
+        result = self._conn.commit()
+        return count, result
+
+    def update_one(self, sql, param=()):
+        count = self.__execute(sql, param)
+        result = self._conn.commit()
+        return count, result
+
+    def begin(self):
+        """开启事务"""
+        self._conn.autocommit(0)
+
+    def end(self, option='commit'):
+        """结束事务"""
+        if option == 'commit':
+            self._conn.autocommit()
         else:
-            return json.JSONEncoder.default(self,obj)
+            self._conn.rollback()
 
 
-def getToken(id,user,name,permission):
+def Times():
+    return int(time.time())
+
+
+def checkToken(token):
+    if token is None:
+        return False, {"code": 103, "msg": "孩子你还没登陆呢，在想什么呢？"}
+    try:
+        jwt_decode = jwt.decode(
+            token, '123456', issuer='Issuer',  algorithms=['HS256'])['data']
+        return True, jwt_decode
+    except:
+        return False, {"code": 102, "msg": "Token认证失败"}
+
+
+def getToken(id, user, name, permission):
     d = {
-        'exp':time.time()+2592000, # 30天
-        'iat':time.time(), # (Issued At) 指明此创建时间的时间戳
-        'iss':'Issuer', # (Issuer) 指明此token的签发者
-        'data':{
-            'id':id,
-            'user':user,
-            'name':name,
-            'permission':permission,
-            'timestamp':time.time()
+        'exp': time.time()+2592000,  # 30天
+        'iat': time.time(),  # (Issued At) 指明此创建时间的时间戳
+        'iss': 'Issuer',  # (Issuer) 指明此token的签发者
+        'data': {
+            'id': id,
+            'user': user,
+            'name': name,
+            'permission': permission,
+            'timestamp': time.time()
         }
     }
-    jwt_encode = jwt.encode(d,'123456',algorithm='HS256')
+    jwt_encode = jwt.encode(d, '123456', algorithm='HS256')
     return jwt_encode
 
-@app.route('/login/',methods=["POST"])
+
+@app.route('/login/', methods=["POST"])
 def login():
+    mc = MysqlClient()
     user = request.json.get("user")
     pswd = request.json.get("pswd")
-    if cursor.execute("SELECT * FROM `user` WHERE `user`=%s",(user)):
-        data = cursor.fetchall()[0]
-        if check_password_hash(data['password'],pswd):
-            del data['password']
-            token = getToken(data['id'],data['user'],data['name'],data['permission'])
-            return {"code":200,"data":data,"token":token}
-        else:
-            return {"code":100,"msg":"用户名或者密码错误!!"}
+    cc, data = mc.select_one("SELECT * FROM `user` WHERE `user`=%s", (user))
+    if cc == 0:
+        return {"code": 101, "msg": "没有该账号!!"}
+    if check_password_hash(data['password'], pswd):
+        del data['password']
+        token = getToken(data['id'], data['user'],
+                         data['name'], data['permission'])
+        return {"code": 200, "data": data, "token": token}
+    else:
+        return {"code": 100, "msg": "用户名或者密码错误!!"}
 
-@app.route('/getPostList/',methods=["POST"])
-def getPost():
+
+@app.route('/getPostList/', methods=["POST"])
+def getPostList():
+    mc = MysqlClient()
     data = request.json
-    print(data)
     sql = """
     SELECT post.userid, post.id, title, type, content
-	, update_time, post_time, 'like', imgs, gender
-	, 'name', avatar, zan, scang, zan_num
-	, scang_num, plun_num
-    FROM post, user, (
-            SELECT COUNT(*) AS plun_num, postid
-            FROM `comment`
-            GROUP BY postid
-        ) plun
+	, update_time, post_time, `link`, imgs, gender
+	, `name`, avatar, zan, scang
+    FROM post, user
     WHERE post.userid = user.id
-        AND plun.postid = post.id
     ORDER BY post_time DESC
     LIMIT %s, 10
-    """ 
-    if cursor.execute(sql,((data.get("limit")-1)*10)):
-        postdata = cursor.fetchall()
-        for i in range(0,len(postdata)):
-            if len(postdata[i]['content']) > 400:
-                postdata[i]['content'] = postdata[i]['content'][:399]+'···'
-            postdata[i]['post_time'] = int(time.mktime(postdata[i]['post_time'].timetuple()))
-            postdata[i]['update_time'] = int(time.mktime(postdata[i]['update_time'].timetuple()))
-            postdata[i]['zan'] = json.loads(postdata[i]['zan'])
-            postdata[i]['scang'] = json.loads(postdata[i]['scang'])
-        if cursor.execute("SELECT COUNT(*) AS total FROM post"):
-            total = cursor.fetchall()[0]
-        return {"code":200,"data":json.loads(json.dumps(postdata,cls=DateEncoder)),"total":total['total']}
-    else:
-        return {"code":500,"msg":"没有获取到帖子数据"}
+    """
+    postdata = mc.select_many(sql, ((data.get("limit")-1)*10))[1]
+    plun = mc.select_many(
+        "SELECT COUNT(*) AS plun_num, postid FROM `comment` GROUP BY postid")[1]
+    plun_num = {}
+    for i in plun:
+        plun_num[i["postid"]] = i["plun_num"]
 
-@app.route('/getCommentList/',methods=["POST"])
+    for i in range(0, len(postdata)):
+        if len(postdata[i]['content']) > 400:
+            postdata[i]['content'] = postdata[i]['content'][:399]+'···'
+        postdata[i]['imgs'] = json.loads(postdata[i]['imgs'])
+        postdata[i]['zan'] = json.loads(postdata[i]['zan'])
+        postdata[i]['scang'] = json.loads(postdata[i]['scang'])
+        postdata[i]['plun_num'] = plun_num.get(postdata[i]['id'], 0)
+
+    total = mc.select_one("SELECT COUNT(*) AS total FROM post")[1]
+    return {"code": 200, "data": json.loads(json.dumps(postdata)), "total": total['total']}
+
+
+@app.route('/getCommentList/', methods=["POST"])
 def getComment():
+    mc = MysqlClient()
     data = request.json
     sql = """
         SELECT `comment`.id, postid, userid, content, imgs
         , comment_time, update_time, permission, gender, name
-        , avatar
+        , avatar,`comment`.comment,zan
         FROM `comment`, `user`
         WHERE `user`.id = `comment`.userid
             AND postid = %s
         ORDER BY comment_time, `comment`.id
         LIMIT %s, 10
     """
-    if cursor.execute(sql,(data.get("postid"),(data.get("limit")-1)*10)):
-        postdata = cursor.fetchall()
-        for i in range(0,len(postdata)):
-            if len(postdata[i]['content']) > 400:
-                postdata[i]['content'] = postdata[i]['content'][:399]+'···'
-            postdata[i]['comment_time'] = int(time.mktime(postdata[i]['comment_time'].timetuple()))
-            postdata[i]['update_time'] = int(time.mktime(postdata[i]['update_time'].timetuple()))
-        return {"code":200,"data":json.loads(json.dumps(postdata,cls=DateEncoder))}
-    else:
-        return {"code":500,"msg":"没有获取到评论数据"}
+    postdata = mc.select_many(
+        sql, (data.get("postid"), (data.get("limit")-1)*10))[1]
 
-@app.route('/register/',methods=["POST"])
+    for i in range(0, len(postdata)):
+        postdata[i]['imgs'] = json.loads(postdata[i]['imgs'])
+        postdata[i]['zan'] = json.loads(postdata[i]['zan'])
+        postdata[i]['comment'] = json.loads(postdata[i]['comment'])
+    return {"code": 200, "data": postdata}
+
+
+@app.route('/register/', methods=["POST"])
 def register():
+    mc = MysqlClient()
     user = request.json.get("user")
     password = generate_password_hash(request.json.get("pswd"))
-    name=user
+    name = user
     sql = "insert into user(user,password,name) values (%s,%s,%s)"
-    if cursor.execute(sql, (user, password, name)):
-        conn.commit()
-        return {"code":200,"msg":"注册成功"}
-    else:
-        return {"code":500,"msg":"没有获取到数据"}
+    mc.insert_one(sql, (user, password, name))
+    return {"code": 200, "msg": "注册成功"}
 
 
-@app.route('/judge/',methods=["GET","POST"])
+@app.route('/judge/', methods=["GET", "POST"])
 def judge():
+    mc = MysqlClient()
     _type = request.args.get('type')
     data = request.args.get('data')
-    print(_type,data)
+    print(_type, data)
     if _type == "user":
-        if cursor.execute("select * from user where user=%s",data):
-            cursor.fetchall()
-            return {"code":301,"msg":"已经有该账号了！！","state":False}
+        if mc.select_one("select * from user where user=%s", data)[0] > 0:
+            return {"code": 301, "msg": "已经有该账号了！！", "state": False}
         else:
-            return {"code":200,"msg":"没有该账号","state":True}
+            return {"code": 200, "msg": "没有这个账号", "state": True}
 
 
-@app.route('/operate/',methods=["POST"])
+@ app.route('/operate/', methods=["POST"])
 def operate():
+    mc = MysqlClient()
     data = request.json
     _type = data.get("type")
-    token = request.cookies.get("token")
-    try:
-        jwt_decode = jwt.decode(token, '123456', issuer='Issuer',  algorithms=['HS256'])['data']
-    except:
-        return {"code":101,"msg":"Token认证失败"}
+    check, jwt_decode = checkToken(request.cookies.get("token"))
+    if not check:
+        return jwt_decode
 
     if data.get("type") == "zan" or data.get("type") == "scang":
         if data.get("post_userid") == jwt_decode["id"]:
-            return {"code":500,"msg":"不能对自己帖子进行操作哦！"}
-        
-        if not data.get("isCancel"): #添加
-            sql = f"UPDATE post set {_type}=JSON_INSERT({_type}, '$.\"%s\"','%s' ),{_type}_num={_type}_num+1 WHERE id=%s" # Key为用户id,value为时间戳
+            return {"code": 500, "msg": "不能对自己帖子进行操作哦！"}
 
-            if cursor.execute(sql,(jwt_decode["id"],int(time.time()),data.get("postid"))):
-                conn.commit()
-                return {"code":200,"msg":f"{_type}添加成功","ty":"add"}
+        if not data.get("isCancel"):  # 添加
+            # Key为用户id,value为时间戳
+            sql = f"UPDATE post set {_type}=JSON_INSERT({_type}, '$.\"%s\"','%s' ) WHERE id=%s"
+            if mc.insert_one(sql, (jwt_decode["id"], Times(), data.get("postid")))[0]:
+                return {"code": 200, "msg": f"{_type}帖子点赞成功", "ty": "add"}
             else:
-                {"code":301,"msg":f"{_type} 数据库未知操作错误！"}
-        
-        elif data.get("isCancel"): #取消
-            sql = f"UPDATE post set {_type}=json_remove({_type}, '$.\"%s\"'),{_type}_num={_type}_num-1 WHERE id=%s" # Key为用户id,value为时间戳
-            if cursor.execute(sql,(jwt_decode["id"],data.get("postid"))):
-                conn.commit()
-                return {"code":200,"msg":f"{_type}取消成功","ty":"re"}
+                return {"code": 201, "msg": f"{_type}数据库错误", "ty": "add"}
+
+        elif data.get("isCancel"):  # 取消
+            # Key为用户id,value为时间戳
+            sql = f"UPDATE post set {_type}=json_remove({_type}, '$.\"%s\"') WHERE id=%s"
+            if mc.insert_one(sql, (jwt_decode["id"], data.get("postid")))[0]:
+                return {"code": 200, "msg": f"{_type}取消成功", "ty": "re"}
             else:
-                {"code":301,"msg":f"{_type} 数据库未知操作错误！"}
+                return {"code": 201, "msg": f"{_type}数据库错误", "ty": "re"}
+
+    elif data.get("type") == "comment_zan":
+        if data.get("comment_userid") == jwt_decode["id"]:
+            return {"code": 500, "msg": "不能对自己帖子进行操作哦！"}
+
+        if not data.get("isCancel"):  # 添加
+            # sql = """
+            # UPDATE `forum`.`comment` SET
+            #     `zan` = json_array_append(`zan`,'$', CAST('{"uid": %s,"date": %s}' AS JSON))
+            #     WHERE `id` = %s;
+            # """
+            sql = """
+            UPDATE `forum`.`comment` SET 
+            `zan` = JSON_INSERT(`zan`,'$.\"%s\"','%s') WHERE `id` = %s;
+            """
+            if mc.insert_one(sql, (jwt_decode["id"], Times(), data.get("commentid")))[0]:
+                return {"code": 200, "msg": f"{_type}评论点赞成功", "ty": "add"}
+            else:
+                return {"code": 201, "msg": f"{_type}数据库错误", "ty": "add"}
+
+        elif data.get("isCancel"):  # 取消
+            sql = """
+            UPDATE `forum`.`comment` SET 
+                `zan` = json_array_append(`zan`,'$', CAST('{"uid": %s,"date": %s}' AS JSON))
+                WHERE `id` = %s;
+            """
+            if mc.insert_one(sql, (jwt_decode["id"], Times(), data.get("commentid")))[0]:
+                return {"code": 200, "msg": f"{_type}评论点赞成功", "ty": "re"}
+            else:
+                return {"code": 201, "msg": f"{_type}数据库错误", "ty": "re"}
 
 
-    elif data.get("type") == "plun":
-        pass
+@ app.route('/upload/', methods=["POST"])
+def upload():
+    data = request.form
+    check, jwt_decode = checkToken(request.cookies.get("token"))
+    if not check:
+        return jwt_decode
+    if data["type"] in ["avatar", "RichText", "ImageText", "PureGraph"]:
+        file_obj = request.files.get("file")
+        filename = secure_filename(file_obj.filename)
+        if file_obj is None:
+            return "文件上传为空"
+        # 文件名id-时间戳-后缀名
+        filename = f"{jwt_decode['id']}-{time.time()}.{filename.split('.')[-1]}"
+        file_obj.save(os.path.join(f'files/{data["type"]}', filename))
+        return {"code": 200, "msg": "成功", "url": f"/files/{data['type']}/{filename}"}
+    else:
+        return {"code": 302, "msg": "上传类型不符"}
 
 
+@ app.route('/sendPost/', methods=["POST"])
+def sendPost():
+    mc = MysqlClient()
+    data = request.json
+    check, jwt_decode = checkToken(request.cookies.get("token"))
+    if not check:
+        return jwt_decode
+    if data.get("type") == "PureGraph":
+        sql = """
+        INSERT INTO `forum`.`post` (`userid`, `title`, `type`, `content`, `link`
+            , `imgs`, `zan`, `scang`)
+        VALUES (%s, %s, %s, %s, %s
+            , %s, '{}', '{}');
+        """
+        if mc.insert_one(sql, (jwt_decode["id"], data['title'],  data['type'], data['content'], data['link'], str(data['imgs']).replace("'", "\"")))[0]:
+            return {"code": 200, "msg": "发布成功！"}
+        else:
+            return {"code": 201, "msg": f"数据库错误", "ty": "re"}
+
+
+@ app.route('/sendComment/', methods=["POST"])
+def sendComment():
+    mc = MysqlClient()
+    data = request.json
+    check, jwt_decode = checkToken(request.cookies.get("token"))
+    if not check:
+        return jwt_decode
+    sql = """
+    INSERT INTO `forum`.`comment` (`postid`, `userid`, `content`, `imgs`,`comment`,`zan`) VALUES (%s, %s, %s, %s,'[]','[]');
+    """
+    mc.insert_one(sql, (data["postid"], jwt_decode["id"],
+                  data["content"], str(data['imgs']).replace("'", "\"")))
+    return {"code": 200, "msg": "评论成功！"}
+
+
+@ app.route('/getPost/', methods=["POST"])
+def getPost():
+    mc = MysqlClient()
+    data = request.json
+    sql = """
+    SELECT post.userid, post.id, title, type, content
+	, update_time, post_time, `link`, imgs, gender
+	, `name`, avatar, zan, scang
+    FROM post, user
+    WHERE post.userid = user.id
+    AND post.id = %s
+    """
+    post_num, postdata = mc.select_one(sql, data.get("postid"))
+    if post_num != 0:
+        plun = mc.select_one(
+            "SELECT COUNT(*) AS plun_num, postid FROM `comment` WHERE postid=%s", (data.get("postid")))[1]
+
+        postdata['imgs'] = json.loads(postdata['imgs'])
+        postdata['zan'] = json.loads(postdata['zan'])
+        postdata['scang'] = json.loads(postdata['scang'])
+        postdata['plun_num'] = plun["plun_num"]
+        return {"code": 200, "data": json.loads(json.dumps(postdata))}
+    else:
+        return {"code": 404, "msg": "没有获取到帖子信息"}
 
 
 if __name__ == "__main__":
+    """
+    100用户名密码错误
+    101没有该账号
+    102Token认证失败
+    103没有登陆
+    201数据库错误
+    200成功
+    301已经有账号了
+    302上传类型不符
+    404没获取到帖子
+    500不能对自己帖子评价
+    """
     app.run(debug=True)

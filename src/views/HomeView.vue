@@ -1,5 +1,5 @@
 <template>
-  <div class="Home">
+  <div class="overallContent">
     <div class="leftside" :style="opti.leftwi">
       <leftside />
       <div class="putAway" @click="opti.putAway" :style="opti.putAwayrig">
@@ -10,19 +10,21 @@
         </n-icon>
       </div>
     </div>
-    <contents :style="opti.contentwi" />
+    <contents :style="opti.contentwi" @getComment="getComment" />
     <div class="rightside" :style="opti.rightwi">
-      <rightside v-if="opti.rightContent == '热榜'" />
-      <comment
-        :postid="opti.postid"
-        v-else-if="opti.rightContent == '评论'"
-        :key="opti.postid"
+      <div class="drag" @mousedown="drag"></div>
+      <rightside v-if="rightContent == '热榜'" />
+      <comments
+        :postid="postid"
+        :plun_num="plun_num"
+        v-else-if="rightContent == '评论'"
+        :key="postid"
       />
       <div
         class="putAway"
-        v-if="opti.rightContent != '热榜'"
+        v-if="rightContent != '热榜'"
         style="left: -15px"
-        @click="opti.rightContent = '热榜'"
+        @click="rightContent = '热榜'"
       >
         <n-icon size="28" color="#FFF" class="icon"
           ><ArrowHookUpLeft24Regular />
@@ -41,33 +43,29 @@ import {
 } from "@vicons/fluent";
 import leftside from "../components/Home/leftside.vue";
 import rightside from "../components/Home/rightside.vue";
-import comment from "../components/Home/comment.vue";
+import comments from "../components/Home/comments.vue";
 import contents from "../components/Home/contents.vue";
 import { Options } from "../store/options";
 import leftEditor from "../components/Home/leftEditor.vue";
+import { ref, provide } from "vue";
 const opti = Options();
-opti.rightContent = "热榜";
+const rightContent = ref("热榜");
+const postid = ref(null);
+const plun_num = ref(null);
+function getComment(pid, plun) {
+  postid.value = pid;
+  plun_num.value = plun;
+  rightContent.value = "评论";
+}
+
+provide("YgetComment", getComment);
+
+function drag(aa) {
+  console.log("难实现，先不做了");
+}
 </script>
 
 <style scoped>
-.Home {
-  position: absolute;
-  top: 4.5rem;
-  left: 12vw;
-  width: 76vw;
-  min-width: 750px;
-  height: 88vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  overflow: hidden;
-}
-
 .leftside {
   background-color: rgba(246, 247, 246, 0.65);
   height: 100%;
@@ -104,5 +102,14 @@ opti.rightContent = "热榜";
 
 .editor {
   padding: 0;
+}
+.drag {
+  position: absolute;
+  left: -1%;
+  top: 45%;
+  height: 5%;
+  width: 2%;
+  background-color: rgba(128, 128, 128, 0.6);
+  cursor: w-resize;
 }
 </style>

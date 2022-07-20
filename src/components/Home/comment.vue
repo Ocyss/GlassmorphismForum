@@ -1,90 +1,66 @@
 <template>
-  <div class="commentmain">
-    <div class="comment" v-for="(item, index) in CommentData" :key="item.id">
-      <div class="avatar">
-        <n-avatar round :size="30" v-if="true">{{ item.name }}</n-avatar>
-        <n-avatar
-          round
-          :size="30"
-          v-else
-          :src="item.avatar"
-          fallback-src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
-          lazy
-          :intersection-observer-options="{
-            root: '#image-scroll-container',
-          }"
-        />
-        <div class="information">
-          <n-skeleton v-if="loading" width="100%" :sharp="false" />
-          <div class="name">{{ item.name }}</div>
-          <div class="time">
-            <n-time
-              :time="item.comment_time"
-              unix
-              type="relative"
-              time-zone="Asia/Shanghai"
-            />
-          </div>
+  <div>
+    <div class="avatar">
+      <n-avatar
+        round
+        :size="30"
+        v-if="(props.data.avatar == null) | (props.data.avatar == '')"
+        >{{ props.data.name }}</n-avatar
+      >
+      <n-avatar
+        round
+        :size="30"
+        v-else
+        :src="props.data.avatar"
+        fallback-src="/files/liekai.png"
+        lazy
+        :intersection-observer-options="{
+          root: '#comment-avatar',
+        }"
+      />
+      <div class="information">
+        <div class="name">{{ props.data.name }}</div>
+        <div class="time">
+          <n-time
+            :time="props.data.comment_time"
+            unix
+            type="relative"
+            time-zone="Asia/Shanghai"
+          />
         </div>
       </div>
-      <div class="main">
-        <n-skeleton
-          v-if="loading"
-          width="100%"
-          :height="15"
-          :sharp="false"
-          text
-          :repeat="4"
-          size="medium"
-        />
-        <div class="content">{{ item.content }}</div>
-        <div class="pictureGroup"></div>
+    </div>
+    <div class="main">
+      <div class="content">{{ props.data.content }}</div>
+      <div class="pictureGroup"></div>
+      <div class="operation">
+        <div @click="actionClick(props.data)" class="zan">
+          <n-icon size="15" color="rgb(90,90,90)">
+            <ThumbLike16Filled v-if="zans" />
+            <ThumbLike16Regular v-else /> </n-icon
+          >{{ zan }}
+        </div>
+        <!-- <div>
+            <n-icon size="15" color="rgb(90,90,90)">
+              <Comment16Regular
+            /></n-icon>
+            {{ plun }}
+          </div> -->
       </div>
     </div>
-    <n-pagination
-      v-model:page="page"
-      :page-count="parseInt(opti.commenttotal / 10) + 1"
-      :page-slot="3"
-      @update:page=""
-      size="small"
-      class="pagination"
-    />
   </div>
-  <div class="postComments"></div>
 </template>
 
 <style scoped>
-.postComments {
-  padding: 5px 0 0 0;
+.operation {
+  display: flex;
+  justify-content: space-around;
 }
-.postComments .editor {
-}
-.n-pagination {
-  margin-bottom: 10px;
-}
-</style>
 
-<style scoped>
-.commentmain {
-  overflow-y: scroll;
-  scroll-behavior: smooth;
-  overscroll-behavior: contain;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+.operation .zan {
+  cursor: pointer;
 }
-.comment {
-  width: 70%;
-  display: flex;
-  margin: 10px auto;
-  background: rgba(255, 255, 255, 0.6);
-  padding: 10px;
-  padding-right: 10px;
-  border-radius: 16px;
-  flex-direction: column;
-}
+
 .avatar {
   display: flex;
   align-items: center;
@@ -100,41 +76,53 @@
   font-size: 5px;
   color: rgb(122, 128, 120);
 }
-
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgb(253, 0, 0);
-}
 </style>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import {
+  ThumbLike16Regular,
+  Comment16Regular,
+  ThumbLike16Filled,
+  ImageMultiple28Regular,
+} from "@vicons/fluent";
+import { ref } from "vue";
 import axios from "axios";
-import { Options } from "../../store/options";
-const opti = Options();
-const props = defineProps(["postid"]);
-const CommentData = ref([1, 2, 3, 4, 5, 6]);
-const loading = ref(true);
-const page = ref(1);
-onMounted(() => {
-  var data = axios({
-    url: "/api/getCommentList",
-    method: "post",
-    data: { postid: props.postid, limit: 1 },
-  }).then(function (response) {
-    if (response.data.code != 200) {
-      message.error(response.data.msg);
-    } else {
-      CommentData.value = [];
+import { useMessage } from "naive-ui";
+import { userInfo } from "../../store/userInfo";
+const uinfo = userInfo();
+const message = useMessage();
+const props = defineProps(["data"]);
+const zans = ref(uinfo.uid in props.data.zan);
+const zan = ref(Object.keys(props.data.zan).length);
+// const plun = ref(0);
 
-      for (let d in response.data.data) {
-        CommentData.value.push(response.data.data[d]);
+function actionClick(comment) {
+  if (uinfo.token == "") {
+    message.error("孩子你还没登陆呢，在想什么呢？？");
+  } else {
+    const operateData = {
+      comment_userid: props.data.userid,
+      commentid: comment.id,
+      type: "comment_zan",
+      isCancel: zans.value,
+    };
+    axios({
+      url: "/api/operate",
+      method: "post",
+      data: operateData,
+    }).then(function (response) {
+      if (response.data.code != 200) {
+        message.error(response.data.msg);
+      } else {
+        if (response.data.ty == "add") {
+          zan.value++;
+          zans.value = true;
+        } else if (response.data.ty == "re") {
+          zan.value--;
+          zans.value = false;
+        }
       }
-      loading.value = false;
-    }
-  });
-});
+    });
+  }
+}
 </script>
