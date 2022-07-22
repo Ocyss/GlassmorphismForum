@@ -14,6 +14,7 @@ export const Options = defineStore("Options", {
       pagetotal: -1,
       commenttotal: -1,
       writepost: false,
+      topic_data: null,
     };
   },
   getters: {},

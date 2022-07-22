@@ -1,51 +1,105 @@
 <template>
   <div class="main">
-    <div class="navigation">
-      <div>
-        <n-icon size="16" tag="i">
-          <Home24Filled />
-        </n-icon>
-        主页
-      </div>
-      <div>
-        <n-icon size="16" tag="i">
-          <Sticker24Filled />
-        </n-icon>
-        精选
-      </div>
-      <div>
-        <n-icon size="16" tag="i">
-          <Star24Filled />
-        </n-icon>
-        关注
-      </div>
-    </div>
-    <div class="folder">
-      <n-collapse arrow-placement="right" :default-expanded-names="['1']">
-        <n-collapse-item title="我的关注" name="1">
-          <div>
-            <ul class="topicOfConversation">
-              <li>K40</li>
-              <li>K30S</li>
-              <li>MI12</li>
-              <li>MI10</li>
-              <li>MI6</li>
-            </ul>
-          </div>
-        </n-collapse-item>
-        <n-collapse-item title="热门话题" name="2">
-          <div>很好</div>
-        </n-collapse-item>
-        <n-collapse-item title="数码话题" name="3">
-          <div>真棒</div>
-        </n-collapse-item>
-      </n-collapse>
-    </div>
+    <n-menu :options="menuOptions" accordion />
   </div>
 </template>
 
 <script setup>
 import { Home24Filled, Sticker24Filled, Star24Filled } from "@vicons/fluent";
+import { ref, onMounted, h } from "vue";
+import { NIcon, useMessage } from "naive-ui";
+import axios from "axios";
+import { RouterLink } from "vue-router";
+
+import { userInfo } from "../../store/userInfo";
+const uinfo = userInfo();
+const fileList = ref([]);
+
+function renderIcon(icon) {
+  return () => h(NIcon, null, { default: () => h(icon) });
+}
+const menuOptions = [
+  {
+    label: () =>
+      h(
+        RouterLink,
+        {
+          to: {
+            name: "home",
+            params: {
+              lang: "zh-CN",
+            },
+          },
+        },
+        { default: () => "主页" }
+      ),
+    key: "go-back-home",
+    icon: renderIcon(Home24Filled),
+  },
+  {
+    label: () =>
+      h(
+        RouterLink,
+        {
+          to: {
+            name: "selected",
+            params: {
+              lang: "zh-CN",
+            },
+          },
+        },
+        { default: () => "精选" }
+      ),
+    key: "go-back-selected",
+    icon: renderIcon(Sticker24Filled),
+  },
+  {
+    label: () =>
+      h(
+        RouterLink,
+        {
+          to: {
+            name: "star",
+            params: {
+              lang: "zh-CN",
+            },
+          },
+        },
+        { default: () => "关注" }
+      ),
+    key: "go-back-srar",
+    icon: renderIcon(Star24Filled),
+  },
+  {
+    label: "熊掌",
+    key: "bear-paw",
+    children: [
+      {
+        label: "保护野生动物",
+        key: "protect-wild-animals",
+      },
+    ],
+  },
+  {
+    label: "两个都要",
+    key: "both",
+  },
+];
+function getpost() {
+  axios({
+    url: "/api/getMyFile",
+    method: "get",
+  }).then(function (response) {
+    if ((response.data.code = 200)) {
+      for (let d in response.data.data) {
+        fileList.value.push(response.data.data[d]);
+      }
+    }
+  });
+}
+onMounted(() => {
+  getpost();
+});
 </script>
 
 <style scoped>
@@ -68,13 +122,7 @@ import { Home24Filled, Sticker24Filled, Star24Filled } from "@vicons/fluent";
 }
 
 .folder {
-  width: 60%;
-}
-
-.topicOfConversation li {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  list-style-type: none;
+  width: 90%;
+  font-size: 1.1rem;
 }
 </style>

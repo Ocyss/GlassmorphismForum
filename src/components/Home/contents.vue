@@ -48,6 +48,7 @@ function getpost(page) {
       message.error(response.data.msg);
     } else {
       opti.pagetotal = response.data.total;
+      opti.topic_data = response.data.topic;
       PostData.value = [];
       for (let d in response.data.data) {
         PostData.value.push(response.data.data[d]);

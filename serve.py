@@ -181,7 +181,7 @@ def getPostList():
     sql = """
     SELECT post.userid, post.id, title, type, content
 	, update_time, post_time, `link`, imgs, gender
-	, `name`, avatar, zan, scang
+	, `name`, avatar, zan, scang,topic_id
     FROM post, user
     WHERE post.userid = user.id
     ORDER BY post_time DESC
@@ -198,12 +198,14 @@ def getPostList():
         if len(postdata[i]['content']) > 400:
             postdata[i]['content'] = postdata[i]['content'][:399]+'···'
         postdata[i]['imgs'] = json.loads(postdata[i]['imgs'])
+        postdata[i]['topic_id'] = json.loads(postdata[i]['topic_id'])
         postdata[i]['zan'] = json.loads(postdata[i]['zan'])
         postdata[i]['scang'] = json.loads(postdata[i]['scang'])
         postdata[i]['plun_num'] = plun_num.get(postdata[i]['id'], 0)
 
     total = mc.select_one("SELECT COUNT(*) AS total FROM post")[1]
-    return {"code": 200, "data": json.loads(json.dumps(postdata)), "total": total['total']}
+    topic = mc.select_many("SELECT * FROM topic")[1]
+    return {"code": 200, "data": json.loads(json.dumps(postdata)), "total": total['total'], "topic": topic}
 
 
 @app.route('/getCommentList/', methods=["POST"])
@@ -392,6 +394,20 @@ def getPost():
         return {"code": 200, "data": json.loads(json.dumps(postdata))}
     else:
         return {"code": 404, "msg": "没有获取到帖子信息"}
+
+
+@ app.route('/getMyFile/')
+def getMyFile():
+    mc = MysqlClient()
+    check, jwt_decode = checkToken(request.cookies.get("token"))
+    if not check:
+        return jwt_decode
+    post_num, Myfile = mc.select_one('SELECT * FROM `uconfig` WHERE uid=%s AND type="myFile"', jwt_decode["id"])
+    if post_num:
+        MyFileList = json.loads(Myfile["data"])
+        return {"code": 200, "data": MyFileList}
+    else:
+        return {"code": 404, "msg": f"没有获取到文件夹配置"}
 
 
 if __name__ == "__main__":

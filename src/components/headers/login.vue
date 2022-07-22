@@ -162,6 +162,7 @@ function login() {
       console.log(response.data.data);
       uinfo.setUser(response.data.data, response.data.token);
       emit("setislo");
+      location.reload();
       that.$forceUpdate();
     }
   });

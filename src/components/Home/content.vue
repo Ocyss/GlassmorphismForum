@@ -1,5 +1,5 @@
 <template>
-  <div class="post" @click="jumpTo">
+  <div class="post">
     <div class="avatar">
       <n-avatar
         round
@@ -56,6 +56,21 @@
           </n-space>
         </n-image-group>
       </div>
+      <div class="topic">
+        <n-tag
+          :color="{
+            color: 'rgba(163, 94, 232, 0.5)',
+            borderColor: 'rgb(180,240,180)',
+            textColor: '#FFFFFF',
+          }"
+          size="small"
+          style="margin: 0px 5px"
+          v-for="topic in props.pd.topic_id"
+          :key="topic"
+        >
+          {{ opti.topic_data[topic].name }}
+        </n-tag>
+      </div>
       <div class="operation">
         <div @click.stop="actionClick('zan')">
           <n-icon size="20" color="rgb(90,90,90)">
@@ -75,6 +90,7 @@
         </div>
       </div>
     </div>
+    <div class="jumpto" @click.stop="jumpTo"></div>
   </div>
 </template>
 
@@ -176,23 +192,14 @@ const getComment = function () {
   padding-right: 40px;
   border-radius: 25px;
   position: relative;
-}
-
-.post:hover::before {
-  content: "";
-  width: 100%;
-  height: 100%;
-  border: 5px solid rgba(176, 133, 232, 0.6);
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 25px;
-  box-sizing: border-box;
+  z-index: 1;
 }
 
 .avatar {
   margin-right: 5px;
+  z-index: 10;
+  display: inline-block;
+  height: 40px;
 }
 .information {
   display: flex;
@@ -212,6 +219,7 @@ const getComment = function () {
 }
 .main {
   width: 100%;
+  z-index: 10;
 }
 .pictureGroup {
   margin-top: 10px;
@@ -229,5 +237,28 @@ const getComment = function () {
   user-select: none;
   position: relative;
   z-index: 99;
+}
+
+.jumpto {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 8;
+}
+
+.jumpto:hover::before {
+  content: "";
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  border: 5px solid rgba(176, 133, 232, 0.6);
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 25px;
+  box-sizing: border-box;
 }
 </style>

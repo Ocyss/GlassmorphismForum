@@ -1,7 +1,11 @@
 <template>
   <n-message-provider>
     <headers />
-    <n-config-provider :locale="locale" :date-locale="dateLocale">
+    <n-config-provider
+      :locale="locale"
+      :date-locale="dateLocale"
+      :key="viewKey"
+    >
       <router-view></router-view>
     </n-config-provider>
   </n-message-provider>
@@ -11,7 +15,8 @@
 import { ref } from "vue";
 import headers from "./components/headers.vue";
 import { zhCN, dateZhCN } from "naive-ui";
-
+let dt = new Date();
+const viewKey = ref(dt.getMinutes());
 const locale = ref(zhCN);
 const dateLocale = ref(dateZhCN);
 </script>
