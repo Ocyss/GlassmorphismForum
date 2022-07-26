@@ -4,7 +4,7 @@
       <n-avatar
         round
         :size="30"
-        v-if="(props.pd.avatar == null) | (props.pd.avatar == '')"
+        v-if="(props.pd.avatar == null) | (props.pd.avatar === '')"
         >{{ props.pd.name }}
       </n-avatar>
       <n-avatar
@@ -135,36 +135,36 @@ function jumpTo() {
 
 function actionClick(type) {
   console.log(uinfo.token);
-  if (uinfo.token == "") {
+  if (uinfo.token === "") {
     message.error("孩子你还没登陆呢，在想什么呢？？");
   } else {
     const operateData = {
       post_userid: props.pd.userid,
       postid: props.pd.id,
       type: type,
-      isCancel: type == "zan" ? zans.value : scangs.value,
+      isCancel: type === "zan" ? zans.value : scangs.value,
     };
     axios({
       url: "/api/operate",
       method: "post",
       data: operateData,
     }).then(function (response) {
-      if (response.data.code != 200) {
+      if (response.data.code !== 200) {
         message.error(response.data.msg);
       } else {
-        if (response.data.ty == "add") {
-          if (type == "zan") {
+        if (response.data.ty === "add") {
+          if (type === "zan") {
             zan.value++;
             zans.value = true;
-          } else if (type == "scang") {
+          } else if (type === "scang") {
             scang.value++;
             scangs.value = true;
           }
-        } else if (response.data.ty == "re") {
-          if (type == "zan") {
+        } else if (response.data.ty === "re") {
+          if (type === "zan") {
             zan.value--;
             zans.value = false;
-          } else if (type == "scang") {
+          } else if (type === "scang") {
             scang.value--;
             scangs.value = false;
           }
@@ -188,8 +188,7 @@ const getComment = function () {
   font-size: 0.8rem;
   background: rgb(255, 255, 255);
   display: flex;
-  padding: 10px;
-  padding-right: 40px;
+  padding: 10px 40px 10px 10px;
   border-radius: 25px;
   position: relative;
   z-index: 1;

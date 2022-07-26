@@ -1,24 +1,38 @@
 <template>
   <div class="main">
-    <n-menu :options="menuOptions" accordion />
+    <n-menu class="routeNavigation" :options="routeNavigation" />
+    <n-menu
+      class="personalFolder"
+      :options="personalFolder"
+      accordion
+      :icon-size="25"
+    />
   </div>
 </template>
 
 <script setup>
-import { Home24Filled, Sticker24Filled, Star24Filled } from "@vicons/fluent";
+import {
+  Home24Filled,
+  Sticker24Filled,
+  Star24Filled,
+  Folder28Regular,
+} from "@vicons/fluent";
 import { ref, onMounted, h } from "vue";
 import { NIcon, useMessage } from "naive-ui";
 import axios from "axios";
 import { RouterLink } from "vue-router";
 
 import { userInfo } from "../../store/userInfo";
+
 const uinfo = userInfo();
 const fileList = ref([]);
 
-function renderIcon(icon) {
-  return () => h(NIcon, null, { default: () => h(icon) });
+function renderIcon(icon, size = 32, color) {
+  return () =>
+    h(NIcon, { size: size, color: color }, { default: () => h(icon) });
 }
-const menuOptions = [
+
+const routeNavigation = [
   {
     label: () =>
       h(
@@ -26,9 +40,6 @@ const menuOptions = [
         {
           to: {
             name: "home",
-            params: {
-              lang: "zh-CN",
-            },
           },
         },
         { default: () => "主页" }
@@ -42,9 +53,9 @@ const menuOptions = [
         RouterLink,
         {
           to: {
-            name: "selected",
-            params: {
-              lang: "zh-CN",
+            name: "home",
+            query: {
+              type: "selected",
             },
           },
         },
@@ -59,9 +70,9 @@ const menuOptions = [
         RouterLink,
         {
           to: {
-            name: "star",
-            params: {
-              lang: "zh-CN",
+            name: "home",
+            query: {
+              type: "star",
             },
           },
         },
@@ -70,33 +81,35 @@ const menuOptions = [
     key: "go-back-srar",
     icon: renderIcon(Star24Filled),
   },
-  {
-    label: "熊掌",
-    key: "bear-paw",
-    children: [
-      {
-        label: "保护野生动物",
-        key: "protect-wild-animals",
-      },
-    ],
-  },
-  {
-    label: "两个都要",
-    key: "both",
-  },
 ];
+
+const personalFolder = ref([]);
+
 function getpost() {
   axios({
     url: "/api/getMyFile",
     method: "get",
   }).then(function (response) {
     if ((response.data.code = 200)) {
-      for (let d in response.data.data) {
-        fileList.value.push(response.data.data[d]);
+      for (let d of response.data.data) {
+        let fileList = {
+          label: d.name,
+          key: d.name,
+          icon: renderIcon(Folder28Regular, 18),
+          children: [],
+        };
+        for (let l of d.list) {
+          fileList.children.push({
+            label: l,
+            key: l,
+          });
+        }
+        personalFolder.value.push(fileList);
       }
     }
   });
 }
+
 onMounted(() => {
   getpost();
 });
@@ -109,11 +122,7 @@ onMounted(() => {
   overscroll-behavior: contain;
   width: 100%;
   display: flex;
-  align-items: center;
   flex-direction: column;
-}
-.navigation {
-  margin-top: 15%;
 }
 
 .navigation div {
@@ -121,8 +130,12 @@ onMounted(() => {
   font-size: 1.1rem;
 }
 
-.folder {
-  width: 90%;
-  font-size: 1.1rem;
+.routeNavigation {
+  font-size: 20px;
+}
+
+.personalFolder {
+  margin-top: 2rem;
+  font-size: 16px;
 }
 </style>

@@ -9,7 +9,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from dbutils.pooled_db import PooledDB
 
-
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 app.config['OPENAPI_VERSION'] = '3.0.2'
@@ -134,7 +133,7 @@ def checkToken(token):
         return False, {"code": 103, "msg": "孩子你还没登陆呢，在想什么呢？"}
     try:
         jwt_decode = jwt.decode(
-            token, '123456', issuer='Issuer',  algorithms=['HS256'])['data']
+            token, '123456', issuer='Issuer', algorithms=['HS256'])['data']
         return True, jwt_decode
     except:
         return False, {"code": 102, "msg": "Token认证失败"}
@@ -142,7 +141,7 @@ def checkToken(token):
 
 def getToken(id, user, name, permission):
     d = {
-        'exp': time.time()+2592000,  # 30天
+        'exp': time.time() + 2592000,  # 30天
         'iat': time.time(),  # (Issued At) 指明此创建时间的时间戳
         'iss': 'Issuer',  # (Issuer) 指明此token的签发者
         'data': {
@@ -187,7 +186,7 @@ def getPostList():
     ORDER BY post_time DESC
     LIMIT %s, 10
     """
-    postdata = mc.select_many(sql, ((data.get("limit")-1)*10))[1]
+    postdata = mc.select_many(sql, ((data.get("limit") - 1) * 10))[1]
     plun = mc.select_many(
         "SELECT COUNT(*) AS plun_num, postid FROM `comment` GROUP BY postid")[1]
     plun_num = {}
@@ -196,7 +195,7 @@ def getPostList():
 
     for i in range(0, len(postdata)):
         if len(postdata[i]['content']) > 400:
-            postdata[i]['content'] = postdata[i]['content'][:399]+'···'
+            postdata[i]['content'] = postdata[i]['content'][:399] + '···'
         postdata[i]['imgs'] = json.loads(postdata[i]['imgs'])
         postdata[i]['topic_id'] = json.loads(postdata[i]['topic_id'])
         postdata[i]['zan'] = json.loads(postdata[i]['zan'])
@@ -223,7 +222,7 @@ def getComment():
         LIMIT %s, 10
     """
     postdata = mc.select_many(
-        sql, (data.get("postid"), (data.get("limit")-1)*10))[1]
+        sql, (data.get("postid"), (data.get("limit") - 1) * 10))[1]
 
     for i in range(0, len(postdata)):
         postdata[i]['imgs'] = json.loads(postdata[i]['imgs'])
@@ -256,7 +255,7 @@ def judge():
             return {"code": 200, "msg": "没有这个账号", "state": True}
 
 
-@ app.route('/operate/', methods=["POST"])
+@app.route('/operate/', methods=["POST"])
 def operate():
     mc = MysqlClient()
     data = request.json
@@ -316,7 +315,7 @@ def operate():
                 return {"code": 201, "msg": f"{_type}数据库错误", "ty": "re"}
 
 
-@ app.route('/upload/', methods=["POST"])
+@app.route('/upload/', methods=["POST"])
 def upload():
     data = request.form
     check, jwt_decode = checkToken(request.cookies.get("token"))
@@ -330,12 +329,22 @@ def upload():
         # 文件名id-时间戳-后缀名
         filename = f"{jwt_decode['id']}-{time.time()}.{filename.split('.')[-1]}"
         file_obj.save(os.path.join(f'files/{data["type"]}', filename))
-        return {"code": 200, "msg": "成功", "url": f"/files/{data['type']}/{filename}"}
+        #         return {"code": 200, "msg": "成功", "url": f"/files/{data['type']}/{filename}"}
+        return {
+            "errno": 0,
+            "data": {
+                "url": f"/files/{data['type']}/{filename}",
+                "href": f"/files/{data['type']}/{filename}",
+            }
+        }
     else:
-        return {"code": 302, "msg": "上传类型不符"}
+        return {
+            "errno": 1,
+            "message": "图片上传失败............."
+        }
 
 
-@ app.route('/sendPost/', methods=["POST"])
+@app.route('/sendPost/', methods=["POST"])
 def sendPost():
     mc = MysqlClient()
     data = request.json
@@ -349,13 +358,13 @@ def sendPost():
         VALUES (%s, %s, %s, %s, %s
             , %s, '{}', '{}');
         """
-        if mc.insert_one(sql, (jwt_decode["id"], data['title'],  data['type'], data['content'], data['link'], str(data['imgs']).replace("'", "\"")))[0]:
+        if mc.insert_one(sql, (jwt_decode["id"], data['title'], data['type'], data['content'], data['link'], str(data['imgs']).replace("'", "\"")))[0]:
             return {"code": 200, "msg": "发布成功！"}
         else:
             return {"code": 201, "msg": f"数据库错误", "ty": "re"}
 
 
-@ app.route('/sendComment/', methods=["POST"])
+@app.route('/sendComment/', methods=["POST"])
 def sendComment():
     mc = MysqlClient()
     data = request.json
@@ -366,11 +375,11 @@ def sendComment():
     INSERT INTO `forum`.`comment` (`postid`, `userid`, `content`, `imgs`,`comment`,`zan`) VALUES (%s, %s, %s, %s,'[]','[]');
     """
     mc.insert_one(sql, (data["postid"], jwt_decode["id"],
-                  data["content"], str(data['imgs']).replace("'", "\"")))
+                        data["content"], str(data['imgs']).replace("'", "\"")))
     return {"code": 200, "msg": "评论成功！"}
 
 
-@ app.route('/getPost/', methods=["POST"])
+@app.route('/getPost/', methods=["POST"])
 def getPost():
     mc = MysqlClient()
     data = request.json
@@ -396,7 +405,7 @@ def getPost():
         return {"code": 404, "msg": "没有获取到帖子信息"}
 
 
-@ app.route('/getMyFile/')
+@app.route('/getMyFile/')
 def getMyFile():
     mc = MysqlClient()
     check, jwt_decode = checkToken(request.cookies.get("token"))

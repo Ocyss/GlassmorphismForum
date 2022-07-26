@@ -8,8 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@wangeditor/editor": "^5.1.10",
-    "@wangeditor/editor-for-vue": "^5.1.12",
+    "@wangeditor/editor": "^5.1.12",
     "axios": "^0.27.2",
     "lyla": "^0.6.8",
     "pinia": "^2.0.0-rc.10",
@@ -17,7 +16,8 @@
     "vue": "^3.2.25",
     "vue-cookies": "^1.8.1",
     "vue-resource": "^1.5.3",
-    "vue-router": "4"
+    "vue-router": "4",
+    "wangeditor5-for-vue3": "^0.1.0"
   },
   "devDependencies": {
     "@vicons/fluent": "^0.12.0",

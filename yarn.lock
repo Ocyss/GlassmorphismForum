@@ -350,10 +350,10 @@
   dependencies:
     prismjs "^1.23.0"
 
-"@wangeditor/core@^1.1.7":
-  version "1.1.7"
-  resolved "https://registry.npmmirror.com/@wangeditor/core/-/core-1.1.7.tgz#055096283f96ea4b39dfbc34763f4a500ee3dca8"
-  integrity sha512-lR1Ft8tvS5tVxh/GbRISAOcPgrYJ/+8OhWojQkX2qUKmfv/g+3tqQrog7CY4stF9pU0QpIctXUS1b1WEa3Qb/w==
+"@wangeditor/core@^1.1.9":
+  version "1.1.9"
+  resolved "https://registry.npmmirror.com/@wangeditor/core/-/core-1.1.9.tgz#28b840254e1e64e9dcd9965724591b93f282ceff"
+  integrity sha512-6AEdvX0BswNklfh14zHe+bpe7SatTZ3ImgR1uByCgOvenpP1MLR5EsdRtHwjX2kcNtiTrJMUuGm2xRoW7EUdRg==
   dependencies:
     "@types/event-emitter" "^0.3.3"
     event-emitter "^0.3.5"
@@ -362,21 +362,16 @@
     scroll-into-view-if-needed "^2.2.28"
     slate-history "^0.66.0"
 
-"@wangeditor/editor-for-vue@^5.1.12":
+"@wangeditor/editor@^5.1.12":
   version "5.1.12"
-  resolved "https://registry.npmmirror.com/@wangeditor/editor-for-vue/-/editor-for-vue-5.1.12.tgz#f7d5f239b39cdfc01d31151488de8443fe6edc64"
-  integrity sha512-0Ds3D8I+xnpNWezAeO7HmPRgTfUxHLMd9JKcIw+QzvSmhC5xUHbpCcLU+KLmeBKTR/zffnS5GQo6qi3GhTMJWQ==
-
-"@wangeditor/editor@^5.1.10":
-  version "5.1.10"
-  resolved "https://registry.npmmirror.com/@wangeditor/editor/-/editor-5.1.10.tgz#f209554845747a2bbf5f7fb477616f524e2b0f9f"
-  integrity sha512-bTqqwWFyNCCdnMWAIJvUqOmd5tx3ylz9qEvFXPmXE7xjLZPAJw+ZMt0Z0xzwO47VOMntFkSKp41XQSnSK3wjXw==
+  resolved "https://registry.npmmirror.com/@wangeditor/editor/-/editor-5.1.12.tgz#a16406ac9ef6776b20607c2b686e11bbc9dc5644"
+  integrity sha512-mg0NZq+p/bVp48KIRzb+8goerB7woVryxNSWOnEZKwJC7up6qlOE5z6pWEvUsZ4EGS+lEzvcCcfUKedLZ+QQWg==
   dependencies:
     "@uppy/core" "^2.1.1"
     "@uppy/xhr-upload" "^2.0.3"
     "@wangeditor/basic-modules" "^1.1.3"
     "@wangeditor/code-highlight" "^1.0.2"
-    "@wangeditor/core" "^1.1.7"
+    "@wangeditor/core" "^1.1.9"
     "@wangeditor/list-module" "^1.0.2"
     "@wangeditor/table-module" "^1.1.1"
     "@wangeditor/upload-image-module" "^1.0.1"
@@ -1653,6 +1648,11 @@ vueuc@^0.4.47:
     seemly "^0.3.1"
     vdirs "^0.1.4"
     vooks "^0.2.4"
+
+wangeditor5-for-vue3@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.npmmirror.com/wangeditor5-for-vue3/-/wangeditor5-for-vue3-0.1.0.tgz#b6fe29a3eee827b18e8b66bc3ea8c997d8e39229"
+  integrity sha512-spShzqjgUmmUKH7+adZxS0r+aMtw875NbAMsnGWEwby26c3LUsrVfbxhTVfyZxoYR/O6KqMpyyvxCWqmv7erqA==
 
 webpack-sources@^3.2.3:
   version "3.2.3"

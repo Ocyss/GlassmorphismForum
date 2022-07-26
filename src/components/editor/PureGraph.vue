@@ -2,39 +2,39 @@
   <div class="main">
     <div>
       <n-input
-        type="textarea"
-        maxlength="500"
-        show-count
-        clearable
-        round
-        rows="20"
-        v-model:value="content"
+          type="textarea"
+          maxlength="500"
+          show-count
+          clearable
+          round
+          rows="20"
+          v-model:value="content"
       />
     </div>
 
     <div>
       <n-upload
-        ref="upload"
-        action="/api/upload"
-        list-type="image-card"
-        :max="8"
-        multiple
-        :default-upload="false"
-        with-credentials
-        :data="{ type: 'PureGraph' }"
-        :custom-request="customRequest"
-        @finish="uploadComplete"
-        v-model:file-list="fileList"
+          ref="upload"
+          action="/api/upload"
+          list-type="image-card"
+          :max="8"
+          multiple
+          :default-upload="false"
+          with-credentials
+          :data="{ type: 'PureGraph' }"
+          :custom-request="customRequest"
+          @finish="uploadComplete"
+          v-model:file-list="fileList"
       />
     </div>
     <div>
       <n-button
-        strong
-        secondary
-        size="large"
-        type="success"
-        class="sendbutton"
-        @click="send"
+          strong
+          secondary
+          size="large"
+          type="success"
+          class="sendbutton"
+          @click="send"
       >
         发 射! 射! 射!
       </n-button>
@@ -43,11 +43,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { lyla } from "lyla"; //https://github.com/07akioni/lyla
-import { useMessage } from "naive-ui";
+import {ref} from "vue";
+import {lyla} from "lyla"; //https://github.com/07akioni/lyla
+import {useMessage} from "naive-ui";
 import axios from "axios";
-import { Options } from "../../store/options";
+import {Options} from "../../store/options";
+
 const opit = Options();
 const props = defineProps(["title"]);
 const fileList = ref([]);
@@ -62,7 +63,7 @@ function send() {
 }
 
 function uploadComplete(file) {
-  if (imgs.value.length == fileList.value.length) {
+  if (imgs.value.length === fileList.value.length) {
     const data = ref({
       title: props.title,
       type: "PureGraph",
@@ -76,7 +77,7 @@ function uploadComplete(file) {
       method: "post",
       data: data.value,
     }).then(function (response) {
-      if (response.data.code != 200) {
+      if (response.data.code !== 200) {
         message.error(response.data.msg);
       } else {
         opit.writepost = false;
@@ -87,15 +88,15 @@ function uploadComplete(file) {
 }
 
 const customRequest = ({
-  file,
-  data,
-  headers,
-  withCredentials,
-  action,
-  onError,
-  onFinish,
-  onProgress,
-}) => {
+                         file,
+                         data,
+                         headers,
+                         withCredentials,
+                         action,
+                         onError,
+                         onFinish,
+                         onProgress,
+                       }) => {
   const formData = new FormData();
   if (data) {
     Object.keys(data).forEach((key) => {
@@ -104,26 +105,26 @@ const customRequest = ({
   }
   formData.append("file", file.file);
   lyla
-    .post(action, {
-      withCredentials,
-      headers,
-      body: formData,
-      onUploadProgress: ({ percent }) => {
-        onProgress({ percent: Math.ceil(percent) });
-      },
-    })
-    .then(({ json }) => {
-      if (json.code == 200) {
-        imgs.value.push(json.url);
-        onFinish();
-      } else {
-        message.error(json.msg);
-      }
-    })
-    .catch((error) => {
-      message.success(error.message);
-      onError();
-    });
+      .post(action, {
+        withCredentials,
+        headers,
+        body: formData,
+        onUploadProgress: ({percent}) => {
+          onProgress({percent: Math.ceil(percent)});
+        },
+      })
+      .then(({json}) => {
+        if (json.errno === 0) {
+          imgs.value.push(json.data.url);
+          onFinish();
+        } else {
+          message.error(json.message);
+        }
+      })
+      .catch((error) => {
+        message.success(error.message);
+        onError();
+      });
   return {
     customRequest,
   };
@@ -134,6 +135,7 @@ const customRequest = ({
 div {
   margin-top: 10px;
 }
+
 .sendbutton {
   margin-left: 70%;
 }

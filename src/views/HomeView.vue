@@ -13,16 +13,16 @@
     <contents :style="opti.contentwi" @getComment="getComment" />
     <div class="rightside" :style="opti.rightwi">
       <div class="drag" @mousedown="drag"></div>
-      <rightside v-if="rightContent == '热榜'" />
+      <rightside v-if="rightContent === '热榜'" />
       <comments
         :postid="postid"
         :plun_num="plun_num"
-        v-else-if="rightContent == '评论'"
+        v-else-if="rightContent === '评论'"
         :key="postid"
       />
       <div
         class="putAway"
-        v-if="rightContent != '热榜'"
+        v-if="rightContent !== '热榜'"
         style="left: -15px"
         @click="rightContent = '热榜'"
       >
@@ -60,7 +60,7 @@ function getComment(pid, plun) {
 
 provide("YgetComment", getComment);
 
-function drag(aa) {
+function drag() {
   console.log("难实现，先不做了");
 }
 </script>
@@ -100,9 +100,6 @@ function drag(aa) {
   top: 2%;
 }
 
-.editor {
-  padding: 0;
-}
 .drag {
   position: absolute;
   left: -1%;
