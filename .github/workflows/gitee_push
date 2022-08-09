@@ -1,0 +1,18 @@
+name: gitee_push
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@master
+
+    - name: Async Github Branch To Gitee
+      uses: shanghaobo/github-branch-gitee@master
+      with:
+        github_repo: qiu-lzsnmb/glassmorphism-forum
+        github_branch: master
+        gitee_repo: lzsnmb/glassmorphism-forum
+        gitee_branch: master
+        username: ${{ secrets.GITEE_USERNAME }}
+        password: ${{ secrets.GITEE_PASSWORD }}
