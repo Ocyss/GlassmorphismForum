@@ -1,27 +1,29 @@
 <template>
-  <div class="digital">
-    数码热榜
-    <ol>
-      <li v-for="(item, index) in digitalList" :key="index">
-        <span
-          ><n-ellipsis style="max-width: 100px">{{
-            item.name
-          }}</n-ellipsis></span
-        ><span class="qu">{{ item.quantity }}</span>
-      </li>
-    </ol>
-  </div>
-  <div class="label">
-    话题热榜
-    <ol>
-      <li v-for="(item, index) in labellList" :key="index">
-        <span
-          ><n-ellipsis style="max-width: 100px">{{
-            item.name
-          }}</n-ellipsis></span
-        ><span class="qu">{{ item.quantity }}</span>
-      </li>
-    </ol>
+  <div class="rightside">
+    <div class="digital">
+      数码热榜
+      <ol>
+        <li v-for="(item, index) in digitalList" :key="index">
+          <span
+            ><n-ellipsis style="max-width: 100px">{{
+              item.name
+            }}</n-ellipsis></span
+          ><span class="qu">{{ item.quantity }}</span>
+        </li>
+      </ol>
+    </div>
+    <div class="label">
+      话题热榜
+      <ol>
+        <li v-for="(item, index) in labellList" :key="index">
+          <span
+            ><n-ellipsis style="max-width: 100px">{{
+              item.name
+            }}</n-ellipsis></span
+          ><span class="qu">{{ item.quantity }}</span>
+        </li>
+      </ol>
+    </div>
   </div>
 </template>
 <script setup>
@@ -64,8 +66,13 @@ li {
   padding: 7px 10px;
   list-style-position: inside;
 }
+
 li .qu {
   position: absolute;
   right: 15px;
+}
+
+.rightside {
+  height: 100%;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="overallContent">
     <div class="leftside" :style="opti.leftwi">
-      <leftside />
+      <leftside @changeTopic="changeTopic" />
       <div class="putAway" @click="opti.putAway" :style="opti.putAwayrig">
         <n-icon size="28" color="#FFF" class="icon"
           ><ChevronCircleLeft20Regular
@@ -10,7 +10,11 @@
         </n-icon>
       </div>
     </div>
-    <contents :style="opti.contentwi" @getComment="getComment" />
+    <contents
+      :style="opti.contentwi"
+      @getComment="getComment"
+      ref="contentsRef"
+    />
     <div class="rightside" :style="opti.rightwi">
       <div class="drag" @mousedown="drag"></div>
       <rightside v-if="rightContent === '热榜'" />
@@ -41,17 +45,18 @@ import {
   ChevronCircleRight20Regular,
   ArrowHookUpLeft24Regular,
 } from "@vicons/fluent";
+import { ref, provide } from "vue";
 import leftside from "../components/Home/leftside.vue";
 import rightside from "../components/Home/rightside.vue";
 import comments from "../components/Home/comments.vue";
 import contents from "../components/Home/contents.vue";
 import { Options } from "../store/options";
 import leftEditor from "../components/Home/leftEditor.vue";
-import { ref, provide } from "vue";
 const opti = Options();
 const rightContent = ref("热榜");
 const postid = ref(null);
 const plun_num = ref(null);
+const contentsRef = ref();
 function getComment(pid, plun) {
   postid.value = pid;
   plun_num.value = plun;
@@ -62,6 +67,10 @@ provide("YgetComment", getComment);
 
 function drag() {
   console.log("难实现，先不做了");
+}
+
+function changeTopic(key) {
+  contentsRef.value.getpost(1, "topic", { topic_id: key });
 }
 </script>
 
@@ -79,6 +88,9 @@ function drag() {
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
 }
 
 ::-webkit-scrollbar {

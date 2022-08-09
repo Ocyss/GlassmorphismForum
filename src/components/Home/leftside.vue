@@ -6,6 +6,7 @@
       :options="personalFolder"
       accordion
       :icon-size="25"
+      @update:value="(key) => $emit('changeTopic', key)"
     />
   </div>
 </template>
@@ -26,7 +27,6 @@ import { userInfo } from "../../store/userInfo";
 
 const uinfo = userInfo();
 const fileList = ref([]);
-
 function renderIcon(icon, size = 32, color) {
   return () =>
     h(NIcon, { size: size, color: color }, { default: () => h(icon) });
@@ -85,7 +85,7 @@ const routeNavigation = [
 
 const personalFolder = ref([]);
 
-function getpost() {
+function getMyFile() {
   axios({
     url: "/api/getMyFile",
     method: "get",
@@ -98,10 +98,23 @@ function getpost() {
           icon: renderIcon(Folder28Regular, 18),
           children: [],
         };
-        for (let l of d.list) {
+
+        for (let l in d.list) {
           fileList.children.push({
-            label: l,
-            key: l,
+            label: () =>
+              h(
+                RouterLink,
+                {
+                  to: {
+                    name: "home",
+                    query: {
+                      topic_id: d.list[l],
+                    },
+                  },
+                },
+                { default: () => l }
+              ),
+            key: d.list[l],
           });
         }
         personalFolder.value.push(fileList);
@@ -111,7 +124,7 @@ function getpost() {
 }
 
 onMounted(() => {
-  getpost();
+  getMyFile();
 });
 </script>
 

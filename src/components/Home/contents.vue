@@ -22,7 +22,7 @@
       v-model:page="opti.page"
       :page-count="parseInt(opti.pagetotal / 10)"
       :page-slot="8"
-      @update:page="getpost(opti.page)"
+      @update:page="getpost(opti.page, 'ordinary')"
     />
   </div>
 </template>
@@ -32,17 +32,22 @@ import { Compose16Regular } from "@vicons/fluent";
 import axios from "axios";
 import { useMessage } from "naive-ui";
 import content from "./content.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineExpose } from "vue";
 import { Options } from "../../store/options";
 const opti = Options();
 const message = useMessage();
 const PostData = ref([]);
 
-function getpost(page) {
-  var data = axios({
+function getpost(page, type, json) {
+  let data = { limit: page };
+  if ((type == "topic")  or ()) {
+    data["type"] = "topic";
+    data["topic_id"] = json["topic_id"];
+  }
+  axios({
     url: "/api/getPostList",
     method: "post",
-    data: { limit: page },
+    data: data,
   }).then(function (response) {
     if (response.data.code != 200) {
       message.error(response.data.msg);
@@ -57,7 +62,11 @@ function getpost(page) {
   });
 }
 onMounted(() => {
-  getpost(opti.page);
+  getpost(opti.page, "ordinary");
+});
+
+defineExpose({
+  getpost,
 });
 </script>
 

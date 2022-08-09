@@ -182,10 +182,16 @@ def getPostList():
 	, update_time, post_time, `link`, imgs, gender
 	, `name`, avatar, zan, scang,topic_id
     FROM post, user
-    WHERE post.userid = user.id
+    WHERE post.userid = user.id 额外参数
     ORDER BY post_time DESC
     LIMIT %s, 10
     """
+    if data.get("type") == "topic":
+        total = mc.select_one(f"SELECT COUNT(*) AS total FROM post WHERE JSON_CONTAINS(topic_id,JSON_Array({data.get('topic_id')}))")[1]
+        sql = sql.replace("额外参数", f"AND JSON_CONTAINS(topic_id,JSON_Array({data.get('topic_id')}))")
+    else:
+        sql = sql.replace("额外参数", "")
+        total = mc.select_one("SELECT COUNT(*) AS total FROM post")[1]
     postdata = mc.select_many(sql, ((data.get("limit") - 1) * 10))[1]
     plun = mc.select_many(
         "SELECT COUNT(*) AS plun_num, postid FROM `comment` GROUP BY postid")[1]
@@ -202,9 +208,11 @@ def getPostList():
         postdata[i]['scang'] = json.loads(postdata[i]['scang'])
         postdata[i]['plun_num'] = plun_num.get(postdata[i]['id'], 0)
 
-    total = mc.select_one("SELECT COUNT(*) AS total FROM post")[1]
-    topic = mc.select_many("SELECT * FROM topic")[1]
-    return {"code": 200, "data": json.loads(json.dumps(postdata)), "total": total['total'], "topic": topic}
+    topicData = mc.select_many("SELECT * FROM topic")[1]
+    topics = {}
+    for topic in topicData:
+        topics[topic["id"]] = topic
+    return {"code": 200, "data": json.loads(json.dumps(postdata)), "total": total['total'], "topic": topics}
 
 
 @app.route('/getCommentList/', methods=["POST"])
