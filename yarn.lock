@@ -219,10 +219,10 @@
     "@uppy/utils" "^4.1.0"
     nanoid "^3.1.25"
 
-"@vicons/fluent@^0.12.0":
+"@vicons/ionicons5@^0.12.0":
   version "0.12.0"
-  resolved "https://registry.npmmirror.com/@vicons/fluent/-/fluent-0.12.0.tgz#7e9a39190114f7cb682a71dd166e7efec35e5e9c"
-  integrity sha512-ATCiqPuiJ6RI5GBlD3BIpZ9Xw4MsCA4RpI5oR6MCti4quS4mX1Gp6N74FCzw7lgOj+80rV4HMKhZTVInwimpVQ==
+  resolved "https://registry.npmmirror.com/@vicons/ionicons5/-/ionicons5-0.12.0.tgz#c39fda04420dfae3b58053faf8aaf3555253299d"
+  integrity sha512-Iy1EUVRpX0WWxeu1VIReR1zsZLMc4fqpt223czR+Rpnrwu7pt46nbnC2ycO7ItI/uqDLJxnbcMC7FujKs9IfFA==
 
 "@vicons/utils@^0.1.4":
   version "0.1.4"

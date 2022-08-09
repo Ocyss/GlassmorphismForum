@@ -60,14 +60,14 @@
         <div class="operation">
           <div @click="actionClick('zan')">
             <n-icon size="25" color="rgb(90,90,90)">
-              <ThumbLike16Filled v-if="zans" />
-              <ThumbLike16Regular v-else /> </n-icon
+              <Rose v-if="zans" />
+              <RoseOutline v-else /> </n-icon
             >{{ zan }}
           </div>
           <div @click="actionClick('scang')">
             <n-icon size="25" color="rgb(90,90,90)">
-              <Star16Filled v-if="scangs" />
-              <Star16Regular v-else /> </n-icon
+              <StarSharp v-if="scangs" />
+              <StarOutline v-else /> </n-icon
             >{{ scang }}
           </div>
         </div>
@@ -80,16 +80,12 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import {
-  ThumbLike16Regular,
-  ThumbDislike16Regular,
-  Star16Regular,
-  Comment16Regular,
-  ThumbLike16Filled,
-  ThumbDislike16Filled,
-  Star16Filled,
-  Comment16Filled,
-  GroupReturn24Filled,
-} from "@vicons/fluent";
+  RoseOutline,
+  StarOutline,
+  Rose,
+  StarSharp,
+  ArrowUndo,
+} from "@vicons/ionicons5";
 import { userInfo } from "../../store/userInfo";
 import { useMessage } from "naive-ui";
 import { useRouter } from "vue-router";

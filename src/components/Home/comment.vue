@@ -36,13 +36,13 @@
       <div class="operation">
         <div @click="actionClick(props.data)" class="zan">
           <n-icon size="15" color="rgb(90,90,90)">
-            <ThumbLike16Filled v-if="zans" />
-            <ThumbLike16Regular v-else /> </n-icon
+            <ThumbsUp v-if="zans" />
+            <RoseOutline v-else /> </n-icon
           >{{ zan }}
         </div>
         <!-- <div>
             <n-icon size="15" color="rgb(90,90,90)">
-              <Comment16Regular
+              <ChatboxEllipsesOutline
             /></n-icon>
             {{ plun }}
           </div> -->
@@ -80,11 +80,11 @@
 
 <script setup>
 import {
-  ThumbLike16Regular,
-  Comment16Regular,
-  ThumbLike16Filled,
-  ImageMultiple28Regular,
-} from "@vicons/fluent";
+  RoseOutline,
+  ChatboxEllipsesOutline,
+  ThumbsUp,
+  ImageOutline,
+} from "@vicons/ionicons5";
 import { ref } from "vue";
 import axios from "axios";
 import { useMessage } from "naive-ui";

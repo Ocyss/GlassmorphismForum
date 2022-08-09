@@ -4,9 +4,9 @@
       <leftside @changeTopic="changeTopic" />
       <div class="putAway" @click="opti.putAway" :style="opti.putAwayrig">
         <n-icon size="28" color="#FFF" class="icon"
-          ><ChevronCircleLeft20Regular
+          ><ChevronBackCircleOutline
             v-if="opti.letstate"
-          /><ChevronCircleRight20Regular v-else />
+          /><ChevronForwardCircleOutline v-else />
         </n-icon>
       </div>
     </div>
@@ -31,7 +31,7 @@
         @click="rightContent = '热榜'"
       >
         <n-icon size="28" color="#FFF" class="icon"
-          ><ArrowHookUpLeft24Regular />
+          ><ArrowUndoCircle />
         </n-icon>
       </div>
     </div>
@@ -41,10 +41,10 @@
 
 <script setup>
 import {
-  ChevronCircleLeft20Regular,
-  ChevronCircleRight20Regular,
-  ArrowHookUpLeft24Regular,
-} from "@vicons/fluent";
+  ChevronBackCircleOutline,
+  ChevronForwardCircleOutline,
+  ArrowUndoCircle,
+} from "@vicons/ionicons5";
 import { ref, provide } from "vue";
 import leftside from "../components/Home/leftside.vue";
 import rightside from "../components/Home/rightside.vue";
@@ -83,7 +83,7 @@ function changeTopic(key) {
 }
 
 .rightside {
-  background: rgba(246, 247, 246, 0.15);
+  background: rgba(246, 247, 246, 0.05);
   height: 100%;
   position: relative;
   display: flex;
@@ -93,12 +93,8 @@ function changeTopic(key) {
   overscroll-behavior: contain;
 }
 
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgb(255, 76, 162);
+.rightside::-webkit-scrollbar {
+  width: 0px;
 }
 
 .putAway {
@@ -109,7 +105,7 @@ function changeTopic(key) {
   position: absolute;
   transform: translateX(50%) translateY(-50%);
   z-index: 1;
-  top: 2%;
+  top: 4%;
 }
 
 .drag {

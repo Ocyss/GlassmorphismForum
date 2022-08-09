@@ -13,6 +13,7 @@ export const userInfo = defineStore("storeUser", {
       configure: "",
       avatar: "",
       token: "",
+      Registration_time: "",
     };
   },
   getters: {},
@@ -27,6 +28,7 @@ export const userInfo = defineStore("storeUser", {
       this.configure = data.configure;
       this.avatar = data.avatar;
       this.token = token;
+      this.Registration_time = data.Registration_time;
     },
   },
   persist: {

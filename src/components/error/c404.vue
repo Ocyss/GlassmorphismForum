@@ -1,14 +1,14 @@
 <template>
   <div class="c404">
     <n-icon size="500">
-      <AnimalCat16Regular />
+      <FootstepsOutline />
     </n-icon>
     网页走丢了！！
   </div>
 </template>
 
 <script setup>
-import { AnimalCat16Regular } from "@vicons/fluent";
+import { FootstepsOutline } from "@vicons/ionicons5";
 </script>
 
 <style scoped>

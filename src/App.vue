@@ -11,7 +11,6 @@
   </n-message-provider>
 </template>
 
-
 <script setup>
 import { ref } from "vue";
 import headers from "./components/headers.vue";
@@ -76,7 +75,6 @@ body {
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
   overflow: hidden;
   background: rgba(246, 247, 246, 0.35);
   display: flex;
@@ -84,5 +82,13 @@ body {
   overflow-y: scroll;
   scroll-behavior: smooth;
   overscroll-behavior: contain;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(255, 76, 162);
 }
 </style>

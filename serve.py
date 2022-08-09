@@ -193,6 +193,7 @@ def getPostList():
         sql = sql.replace("额外参数", "")
         total = mc.select_one("SELECT COUNT(*) AS total FROM post")[1]
     postdata = mc.select_many(sql, ((data.get("limit") - 1) * 10))[1]
+
     plun = mc.select_many(
         "SELECT COUNT(*) AS plun_num, postid FROM `comment` GROUP BY postid")[1]
     plun_num = {}
@@ -362,9 +363,9 @@ def sendPost():
     if data.get("type") == "PureGraph":
         sql = """
         INSERT INTO `forum`.`post` (`userid`, `title`, `type`, `content`, `link`
-            , `imgs`, `zan`, `scang`)
+            , `imgs`, `zan`, `scang`,`topic_id`)
         VALUES (%s, %s, %s, %s, %s
-            , %s, '{}', '{}');
+            , %s, '{}', '{}','{}');
         """
         if mc.insert_one(sql, (jwt_decode["id"], data['title'], data['type'], data['content'], data['link'], str(data['imgs']).replace("'", "\"")))[0]:
             return {"code": 200, "msg": "发布成功！"}

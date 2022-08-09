@@ -2,6 +2,8 @@
   <div class="main">
     <n-menu class="routeNavigation" :options="routeNavigation" />
     <n-menu
+      ref="menuInstRef"
+      v-model:value="selectedKeyRef"
       class="personalFolder"
       :options="personalFolder"
       accordion
@@ -12,22 +14,18 @@
 </template>
 
 <script setup>
-import {
-  Home24Filled,
-  Sticker24Filled,
-  Star24Filled,
-  Folder28Regular,
-} from "@vicons/fluent";
+import { Home, DiamondSharp, Star, FolderOpenOutline } from "@vicons/ionicons5";
 import { ref, onMounted, h } from "vue";
 import { NIcon, useMessage } from "naive-ui";
 import axios from "axios";
-import { RouterLink } from "vue-router";
-
+import { RouterLink, useRoute } from "vue-router";
 import { userInfo } from "../../store/userInfo";
-
+const selectedKeyRef = ref("");
+const route = useRoute();
 const uinfo = userInfo();
 const fileList = ref([]);
-function renderIcon(icon, size = 32, color) {
+const menuInstRef = ref(null);
+function renderIcon(icon, size = 23, color = "rgb(120,120,120)") {
   return () =>
     h(NIcon, { size: size, color: color }, { default: () => h(icon) });
 }
@@ -45,7 +43,7 @@ const routeNavigation = [
         { default: () => "主页" }
       ),
     key: "go-back-home",
-    icon: renderIcon(Home24Filled),
+    icon: renderIcon(Home),
   },
   {
     label: () =>
@@ -62,7 +60,7 @@ const routeNavigation = [
         { default: () => "精选" }
       ),
     key: "go-back-selected",
-    icon: renderIcon(Sticker24Filled),
+    icon: renderIcon(DiamondSharp),
   },
   {
     label: () =>
@@ -79,7 +77,7 @@ const routeNavigation = [
         { default: () => "关注" }
       ),
     key: "go-back-srar",
-    icon: renderIcon(Star24Filled),
+    icon: renderIcon(Star),
   },
 ];
 
@@ -95,7 +93,7 @@ function getMyFile() {
         let fileList = {
           label: d.name,
           key: d.name,
-          icon: renderIcon(Folder28Regular, 18),
+          icon: renderIcon(FolderOpenOutline, 18),
           children: [],
         };
 
@@ -114,11 +112,15 @@ function getMyFile() {
                 },
                 { default: () => l }
               ),
-            key: d.list[l],
+            key: d.list[l].toString(),
           });
         }
         personalFolder.value.push(fileList);
       }
+    }
+    if (route.query.hasOwnProperty("topic_id")) {
+      selectedKeyRef.value = route.query.topic_id;
+      menuInstRef.value?.showOption(route.query.topic_id);
     }
   });
 }

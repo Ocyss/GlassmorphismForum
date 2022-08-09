@@ -8,7 +8,7 @@
     >
       <template #icon>
         <n-icon>
-          <Compose16Regular />
+          <Create />
         </n-icon>
       </template>
     </n-button>
@@ -28,12 +28,15 @@
 </template>
 
 <script setup>
-import { Compose16Regular } from "@vicons/fluent";
+import { Create } from "@vicons/ionicons5";
 import axios from "axios";
 import { useMessage } from "naive-ui";
 import content from "./content.vue";
-import { ref, onMounted, defineExpose } from "vue";
+import { ref, onMounted } from "vue";
 import { Options } from "../../store/options";
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter();
+const route = useRoute();
 const opti = Options();
 const message = useMessage();
 const PostData = ref([]);
@@ -43,6 +46,9 @@ function getpost(page, type, json) {
   if (type == "topic") {
     data["type"] = "topic";
     data["topic_id"] = json["topic_id"];
+  } else if (route.query.hasOwnProperty("topic_id")) {
+    data["type"] = "topic";
+    data["topic_id"] = route.query.topic_id;
   }
   axios({
     url: "/api/getPostList",
@@ -52,6 +58,12 @@ function getpost(page, type, json) {
     if (response.data.code != 200) {
       message.error(response.data.msg);
     } else {
+      if (response.data.data.length == 0) {
+        router.push({
+          path: "/error",
+          query: { code: 404 },
+        });
+      }
       opti.pagetotal = response.data.total;
       opti.topic_data = response.data.topic;
       PostData.value = [];

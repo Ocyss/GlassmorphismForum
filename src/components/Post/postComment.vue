@@ -58,8 +58,8 @@
           <div class="operation">
             <div @click="actionClick('zan')">
               <n-icon size="25" color="rgb(90,90,90)">
-                <ThumbLike16Filled v-if="zans" />
-                <ThumbLike16Regular v-else /> </n-icon
+                <Rose v-if="zans" />
+                <RoseOutline v-else /> </n-icon
               >{{ zan }}
             </div>
           </div>
@@ -70,7 +70,7 @@
 </template>
 
 <script setup>
-import { ThumbLike16Regular, ThumbLike16Filled } from "@vicons/fluent";
+import { RoseOutline, Rose } from "@vicons/ionicons5";
 import { ref } from "vue";
 import axios from "axios";
 import { userInfo } from "../../store/userInfo";

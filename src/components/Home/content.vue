@@ -69,23 +69,28 @@
           :key="topic"
         >
           {{ opti.topic_data[topic].name }}
+          <template #avatar>
+            <n-avatar :src="opti.topic_data[topic].logo" />
+          </template>
         </n-tag>
       </div>
       <div class="operation">
         <div @click.stop="actionClick('zan')">
           <n-icon size="20" color="rgb(90,90,90)">
-            <ThumbLike16Filled v-if="zans" />
-            <ThumbLike16Regular v-else /> </n-icon
+            <Rose v-if="zans" />
+            <RoseOutline v-else /> </n-icon
           >{{ zan }}
         </div>
         <div @click.stop="getComment">
-          <n-icon size="20" color="rgb(90,90,90)"> <Comment16Regular /></n-icon>
+          <n-icon size="20" color="rgb(90,90,90)">
+            <ChatboxEllipsesOutline
+          /></n-icon>
           {{ plun }}
         </div>
         <div @click.stop="actionClick('scang')">
           <n-icon size="20" color="rgb(90,90,90)">
-            <Star16Filled v-if="scangs" />
-            <Star16Regular v-else /> </n-icon
+            <StarSharp v-if="scangs" />
+            <StarOutline v-else /> </n-icon
           >{{ scang }}
         </div>
       </div>
@@ -96,15 +101,13 @@
 
 <script setup>
 import {
-  ThumbLike16Regular,
-  ThumbDislike16Regular,
-  Star16Regular,
-  Comment16Regular,
-  ThumbLike16Filled,
-  ThumbDislike16Filled,
-  Star16Filled,
-  Comment16Filled,
-} from "@vicons/fluent";
+  RoseOutline,
+  StarOutline,
+  ChatboxEllipsesOutline,
+  Rose,
+  StarSharp,
+} from "@vicons/ionicons5";
+
 import { ref, inject } from "vue";
 import axios from "axios";
 import { userInfo } from "../../store/userInfo";
@@ -182,9 +185,9 @@ const getComment = function () {
 
 <style scoped>
 .post {
-  width: 80%;
+  width: 95%;
   /* height: 200px; */
-  margin: 10px auto;
+  margin: 1.5% 2.5%;
   font-size: 0.8rem;
   background: rgb(255, 255, 255);
   display: flex;
@@ -231,11 +234,11 @@ const getComment = function () {
 
 .operation > div {
   display: flex;
-  align-items: center;
   cursor: pointer;
   user-select: none;
   position: relative;
   z-index: 99;
+  align-items: flex-end;
 }
 
 .jumpto {

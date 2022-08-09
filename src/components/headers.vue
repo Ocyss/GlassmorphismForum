@@ -9,26 +9,15 @@
     </div>
     <div class="navigation">
       <n-icon size="28">
-        <WeatherMoon28Filled />
+        <MoonSharp />
       </n-icon>
       <n-icon size="28">
-        <People16Filled />
+        <PeopleCircleOutline />
       </n-icon>
       <n-icon size="28">
-        <MailMultiple16Filled />
+        <MailSharp />
       </n-icon>
-      <div class="personal" v-if="islo">
-        <n-avatar
-          round
-          :size="30"
-          :src="uinfo.avatar"
-          v-if="uinfo.avatar != null"
-        />
-        <n-avatar round :size="30" v-else>{{ uinfo.name }}</n-avatar>
-        <div class="name">{{ uinfo.name }}</div>
-        <h1>&nbsp&nbsp&nbsp&nbsp</h1>
-        <n-button @click="sign" type="error" size="tiny"> 退出登陆 </n-button>
-      </div>
+      <personal v-if="islo" @logout="logout" />
       <login v-else @setislo="setislo" />
     </div>
   </div>
@@ -36,15 +25,18 @@
 
 <script setup>
 import {
-  MailMultiple16Filled,
-  People16Filled,
-  WeatherSunny32Filled,
-  WeatherMoon28Filled,
-} from "@vicons/fluent";
+  MailSharp,
+  PeopleCircleOutline,
+  SunnySharp,
+  MoonSharp,
+} from "@vicons/ionicons5";
 import { ref, getCurrentInstance } from "vue";
 import login from "./headers/login.vue";
+import personal from "./headers/personal.vue";
 import { userInfo } from "../store/userInfo";
 import { useRouter } from "vue-router";
+import { useMessage } from "naive-ui";
+const message = useMessage();
 const router = useRouter();
 const uinfo = userInfo();
 const internalInstance = getCurrentInstance();
@@ -52,8 +44,12 @@ const internalData = internalInstance.appContext.config.globalProperties;
 
 let islo = ref(internalData.$cookies.get("token") != null);
 
-function sign() {
-  // window.$message.success(`再见~~ ${response.data.data.name}`);
+function setislo() {
+  islo.value = internalData.$cookies.get("token") != null;
+}
+
+function logout() {
+  message.success(`再见~~ ${uinfo.name}`);
   $cookies.config("0"); //一个月
   // 设置cookies
   if ($cookies.isKey("token")) {
@@ -61,10 +57,6 @@ function sign() {
   }
   uinfo.$reset();
   islo.value = false;
-}
-
-function setislo() {
-  islo.value = internalData.$cookies.get("token") != null;
 }
 </script>
 
@@ -106,14 +98,5 @@ function setislo() {
 
 .navigation i {
   margin-right: 25px;
-}
-
-.personal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.personal .name {
-  font-size: 1.2rem;
 }
 </style>

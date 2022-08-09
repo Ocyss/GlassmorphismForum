@@ -17,6 +17,16 @@ const routes = [
     name: "error",
     component: () => import("../views/ErrorView.vue"),
   },
+  {
+    path: "/settings",
+    name: "settings",
+    children: [
+      {
+        path: "material",
+        component: () => import("../views/settings/MaterialView.vue"),
+      },
+    ],
+  },
 ];
 
 const router = createRouter({

@@ -159,7 +159,6 @@ function login() {
       // 设置cookies
       $cookies.set("token", response.data.token);
       $cookies.set("userid", response.data.data.id);
-      console.log(response.data.data);
       uinfo.setUser(response.data.data, response.data.token);
       emit("setislo");
       location.reload();
