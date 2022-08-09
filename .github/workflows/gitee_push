@@ -1,5 +1,7 @@
 name: gitee_push
-on: [push]
+on:
+  push:
+  workflow_dispatch:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
