@@ -51,7 +51,38 @@
 
 ## 预览图
 
-[![jgXEIs.png](https://s1.ax1x.com/2022/07/12/jgXEIs.png)](https://imgtu.com/i/jgXEIs)
-![jgXZin.png](https://s1.ax1x.com/2022/07/12/jgXZin.png)
+![整体UI](.\imgs\整体UI.png)
+
+![登陆功能](.\imgs\登陆功能.png)
+
+![查看大图](.\imgs\查看大图.png)
+
+![查看评论](.\imgs\查看评论.png)
+
+![收缩侧栏](.\imgs\收缩侧栏.png)
+
+![发布帖子](.\imgs\发布帖子.png)
+
+![查看帖子详情](.\imgs\查看帖子详情.png)半成品
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 [![Stargazers repo roster for @qiu-lzsnmb/glassmorphism-forum](https://reporoster.com/stars/qiu-lzsnmb/glassmorphism-forum)](https://github.com/qiu-lzsnmb/glassmorphism-forum/stargazers)
