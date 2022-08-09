@@ -51,12 +51,12 @@
 
 ## 预览图
 
-[![vl0wdA.png](https://s1.ax1x.com/2022/08/09/vl0wdA.png)](https://imgtu.com/i/vl0wdA)
-[![vl0dZd.png](https://s1.ax1x.com/2022/08/09/vl0dZd.png)](https://imgtu.com/i/vl0dZd)
-[![vl00II.png](https://s1.ax1x.com/2022/08/09/vl00II.png)](https://imgtu.com/i/vl00II)
-[![vl0Nse.png](https://s1.ax1x.com/2022/08/09/vl0Nse.png)](https://imgtu.com/i/vl0Nse)
-[![vl0JxO.png](https://s1.ax1x.com/2022/08/09/vl0JxO.png)](https://imgtu.com/i/vl0JxO)
-[![vl0tMD.png](https://s1.ax1x.com/2022/08/09/vl0tMD.png)](https://imgtu.com/i/vl0tMD)
-[![vl0UqH.png](https://s1.ax1x.com/2022/08/09/vl0UqH.png)](https://imgtu.com/i/vl0UqH)
+[![vl0wdA.png](https://s1.ax1x.com/2022/08/09/vl0wdA.png)](https://s1.ax1x.com/2022/08/09/vl0wdA.png)
+[![vl0dZd.png](https://s1.ax1x.com/2022/08/09/vl0dZd.png)](https://s1.ax1x.com/2022/08/09/vl0dZd.png)
+[![vl00II.png](https://s1.ax1x.com/2022/08/09/vl00II.png)](https://s1.ax1x.com/2022/08/09/vl00II.png)
+[![vl0Nse.png](https://s1.ax1x.com/2022/08/09/vl0Nse.png)](https://s1.ax1x.com/2022/08/09/vl0Nse.png)
+[![vl0JxO.png](https://s1.ax1x.com/2022/08/09/vl0JxO.png)](https://s1.ax1x.com/2022/08/09/vl0JxO.png)
+[![vl0tMD.png](https://s1.ax1x.com/2022/08/09/vl0tMD.png)](https://s1.ax1x.com/2022/08/09/vl0tMD.png)
+[![vl0UqH.png](https://s1.ax1x.com/2022/08/09/vl0UqH.png)](https://s1.ax1x.com/2022/08/09/vl0UqH.png)
 
 [![Stargazers repo roster for @qiu-lzsnmb/glassmorphism-forum](https://reporoster.com/stars/qiu-lzsnmb/glassmorphism-forum)](https://github.com/qiu-lzsnmb/glassmorphism-forum/stargazers)
