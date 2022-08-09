@@ -2,7 +2,7 @@
  <img width="150px" src="https://s1.ax1x.com/2022/07/17/j5IS74.png" align="center" alt="QS论坛" />
  <h2 align="center">QS论坛</h2>
  <p align="center">一个玻璃态(glassmorphism)且追求简洁的论坛</p>
-</p>
+<p align="center"><a href="https://www.oscs1024.com/project/oscs/qiu-lzsnmb/glassmorphism-forum?ref=badge_small" alt="OSCS Status"><img src="https://www.oscs1024.com/platform/badge/qiu-lzsnmb/glassmorphism-forum.svg?size=small"/></a></p>
 
 ---
 
