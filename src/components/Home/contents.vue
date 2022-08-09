@@ -40,7 +40,7 @@ const PostData = ref([]);
 
 function getpost(page, type, json) {
   let data = { limit: page };
-  if ((type == "topic")  or ()) {
+  if (type == "topic") {
     data["type"] = "topic";
     data["topic_id"] = json["topic_id"];
   }

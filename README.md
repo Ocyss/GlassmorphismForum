@@ -9,6 +9,7 @@
 > #### 简单入门 vue 后的第二个实战项目，多以前端为主，python 部分能用就行，以后在优化
 >
 > 有建议和问题多提 issues
+> files 文件过大 1g，放到云盘中了https://www.123pan.com/s/cYI8Vv-xnZ0h，自行下载解压！
 
 ## 技术栈
 
@@ -44,16 +45,13 @@
 
 ## 近期日志
 
-##### 2022年7月18日
+##### 2022 年 7 月 18 日
 
-> 1. 修复pymysql.err.interfaceerror: (0, '')
->
-> 
+> 1. 修复 pymysql.err.interfaceerror: (0, '')
 
 ## 预览图
 
 [![jgXEIs.png](https://s1.ax1x.com/2022/07/12/jgXEIs.png)](https://imgtu.com/i/jgXEIs)
 ![jgXZin.png](https://s1.ax1x.com/2022/07/12/jgXZin.png)
-
 
 [![Stargazers repo roster for @qiu-lzsnmb/glassmorphism-forum](https://reporoster.com/stars/qiu-lzsnmb/glassmorphism-forum)](https://github.com/qiu-lzsnmb/glassmorphism-forum/stargazers)
