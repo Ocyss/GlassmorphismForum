@@ -51,12 +51,6 @@
 
 ## 预览图
 
-[![vl0wdA.png](https://s1.ax1x.com/2022/08/09/vl0wdA.png)](https://s1.ax1x.com/2022/08/09/vl0wdA.png)
-[![vl0dZd.png](https://s1.ax1x.com/2022/08/09/vl0dZd.png)](https://s1.ax1x.com/2022/08/09/vl0dZd.png)
-[![vl00II.png](https://s1.ax1x.com/2022/08/09/vl00II.png)](https://s1.ax1x.com/2022/08/09/vl00II.png)
-[![vl0Nse.png](https://s1.ax1x.com/2022/08/09/vl0Nse.png)](https://s1.ax1x.com/2022/08/09/vl0Nse.png)
-[![vl0JxO.png](https://s1.ax1x.com/2022/08/09/vl0JxO.png)](https://s1.ax1x.com/2022/08/09/vl0JxO.png)
-[![vl0tMD.png](https://s1.ax1x.com/2022/08/09/vl0tMD.png)](https://s1.ax1x.com/2022/08/09/vl0tMD.png)
-[![vl0UqH.png](https://s1.ax1x.com/2022/08/09/vl0UqH.png)](https://s1.ax1x.com/2022/08/09/vl0UqH.png)
+[![efbdbbb015e5bb5d381cc8443944f887.th.png](https://img.gejiba.com/images/efbdbbb015e5bb5d381cc8443944f887.th.png)](https://img.gejiba.com/image/EV01zZ) [![6df7d86eb52e3445f255da064fe1c927.th.png](https://img.gejiba.com/images/6df7d86eb52e3445f255da064fe1c927.th.png)](https://img.gejiba.com/image/EV00E5) [![f6ce80c561e1f72dbc0a6383b7ab4cba.th.png](https://img.gejiba.com/images/f6ce80c561e1f72dbc0a6383b7ab4cba.th.png)](https://img.gejiba.com/image/EV0YMg) [![4ae4951a57433a5cf24e4be58c392c13.th.png](https://img.gejiba.com/images/4ae4951a57433a5cf24e4be58c392c13.th.png)](https://img.gejiba.com/image/EV058z) [![112955893a1b22c036223bff314fbfcb.th.png](https://img.gejiba.com/images/112955893a1b22c036223bff314fbfcb.th.png)](https://img.gejiba.com/image/EV0Xc1) [![3703230794d7198a63f6d4d4d2a18f10.th.png](https://img.gejiba.com/images/3703230794d7198a63f6d4d4d2a18f10.th.png)](https://img.gejiba.com/image/EV0e2i) [![b8ba36f45eda433c15ff5d7aec40d8a1.th.png](https://img.gejiba.com/images/b8ba36f45eda433c15ff5d7aec40d8a1.th.png)](https://img.gejiba.com/image/EV0UOs) [![d108ae01a63b924f0dcdfcedd7cc67fb.th.png](https://img.gejiba.com/images/d108ae01a63b924f0dcdfcedd7cc67fb.th.png)](https://img.gejiba.com/image/EV0jPl)
 
 [![Stargazers repo roster for @qiu-lzsnmb/glassmorphism-forum](https://reporoster.com/stars/qiu-lzsnmb/glassmorphism-forum)](https://github.com/qiu-lzsnmb/glassmorphism-forum/stargazers)
