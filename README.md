@@ -51,20 +51,6 @@
 
 ## 预览图
 
-[![efbdbbb015e5bb5d381cc8443944f887.th.png](https://img.gejiba.com/images/efbdbbb015e5bb5d381cc8443944f887.th.png)](https://img.gejiba.com/images/efbdbbb015e5bb5d381cc8443944f887.png)
-
-[![6df7d86eb52e3445f255da064fe1c927.th.png](https://img.gejiba.com/images/6df7d86eb52e3445f255da064fe1c927.th.png)](https://img.gejiba.com/images/6df7d86eb52e3445f255da064fe1c927.png)
-
-[![f6ce80c561e1f72dbc0a6383b7ab4cba.th.png](https://img.gejiba.com/images/f6ce80c561e1f72dbc0a6383b7ab4cba.th.png)](https://img.gejiba.com/images/f6ce80c561e1f72dbc0a6383b7ab4cba.png)
-
-[![4ae4951a57433a5cf24e4be58c392c13.th.png](https://img.gejiba.com/images/4ae4951a57433a5cf24e4be58c392c13.th.png)](https://img.gejiba.com/images/4ae4951a57433a5cf24e4be58c392c13.png)
-
-[![112955893a1b22c036223bff314fbfcb.th.png](https://img.gejiba.com/images/112955893a1b22c036223bff314fbfcb.th.png)](https://img.gejiba.com/images/112955893a1b22c036223bff314fbfcb.png)
-
-[![3703230794d7198a63f6d4d4d2a18f10.th.png](https://img.gejiba.com/images/3703230794d7198a63f6d4d4d2a18f10.th.png)](https://img.gejiba.com/images/3703230794d7198a63f6d4d4d2a18f10.png)
-
-[![b8ba36f45eda433c15ff5d7aec40d8a1.th.png](https://img.gejiba.com/images/b8ba36f45eda433c15ff5d7aec40d8a1.th.png)](https://img.gejiba.com/images/b8ba36f45eda433c15ff5d7aec40d8a1.png)
-
-[![d108ae01a63b924f0dcdfcedd7cc67fb.th.png](https://img.gejiba.com/images/d108ae01a63b924f0dcdfcedd7cc67fb.th.png)](https://img.gejiba.com/images/d108ae01a63b924f0dcdfcedd7cc67fb.png)
+[![efbdbbb015e5bb5d381cc8443944f887.th.png](https://img.gejiba.com/images/efbdbbb015e5bb5d381cc8443944f887.th.png)](https://img.gejiba.com/images/efbdbbb015e5bb5d381cc8443944f887.png)[![6df7d86eb52e3445f255da064fe1c927.th.png](https://img.gejiba.com/images/6df7d86eb52e3445f255da064fe1c927.th.png)](https://img.gejiba.com/images/6df7d86eb52e3445f255da064fe1c927.png)[![f6ce80c561e1f72dbc0a6383b7ab4cba.th.png](https://img.gejiba.com/images/f6ce80c561e1f72dbc0a6383b7ab4cba.th.png)](https://img.gejiba.com/images/f6ce80c561e1f72dbc0a6383b7ab4cba.png)[![4ae4951a57433a5cf24e4be58c392c13.th.png](https://img.gejiba.com/images/4ae4951a57433a5cf24e4be58c392c13.th.png)](https://img.gejiba.com/images/4ae4951a57433a5cf24e4be58c392c13.png)[![112955893a1b22c036223bff314fbfcb.th.png](https://img.gejiba.com/images/112955893a1b22c036223bff314fbfcb.th.png)](https://img.gejiba.com/images/112955893a1b22c036223bff314fbfcb.png)[![3703230794d7198a63f6d4d4d2a18f10.th.png](https://img.gejiba.com/images/3703230794d7198a63f6d4d4d2a18f10.th.png)](https://img.gejiba.com/images/3703230794d7198a63f6d4d4d2a18f10.png)[![b8ba36f45eda433c15ff5d7aec40d8a1.th.png](https://img.gejiba.com/images/b8ba36f45eda433c15ff5d7aec40d8a1.th.png)](https://img.gejiba.com/images/b8ba36f45eda433c15ff5d7aec40d8a1.png)[![d108ae01a63b924f0dcdfcedd7cc67fb.th.png](https://img.gejiba.com/images/d108ae01a63b924f0dcdfcedd7cc67fb.th.png)](https://img.gejiba.com/images/d108ae01a63b924f0dcdfcedd7cc67fb.png)
 
 [![Stargazers repo roster for @qiu-lzsnmb/glassmorphism-forum](https://reporoster.com/stars/qiu-lzsnmb/glassmorphism-forum)](https://github.com/qiu-lzsnmb/glassmorphism-forum/stargazers)
