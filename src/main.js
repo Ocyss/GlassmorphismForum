@@ -1,15 +1,16 @@
-import {createApp} from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import axios from "axios";
 import VueCookies from "vue-cookies";
-import {createPinia} from "pinia";
+import { createPinia } from "pinia";
 import piniaPersist from "pinia-plugin-persist";
+import UndrawUi from "undraw-ui";
+import "undraw-ui/dist/style.css";
 
 const pinia = createPinia();
 pinia.use(piniaPersist);
 const app = createApp(App);
-
 app.config.globalProperties.$axios = axios;
 app.config.globalProperties.$cookies = VueCookies;
-app.use(router).use(pinia).mount("#app");
+app.use(router).use(pinia).use(UndrawUi).mount("#app");

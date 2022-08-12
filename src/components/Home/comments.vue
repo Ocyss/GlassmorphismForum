@@ -77,6 +77,9 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useMessage } from "naive-ui";
 import { userInfo } from "../../store/userInfo";
+// import { UToast, UserApi, CommentSubmitParam } from "undraw-ui";
+import emoji from "../../api/emoji";
+
 const uinfo = userInfo();
 const message = useMessage();
 const props = defineProps(["postid", "plun_num"]);
@@ -102,11 +105,13 @@ function sendComment() {
         avatar: uinfo.avatar,
         content: value.value,
         id: -1,
-        imgs: "[]",
+        imgs: [],
         name: uinfo.name,
         permission: uinfo.permission,
         postid: props.postid,
         userid: uinfo.uid,
+        zan: [],
+        comment: [],
       });
       CommentData.value.push(Text.value);
       value.value = "";

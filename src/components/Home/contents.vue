@@ -65,7 +65,6 @@ function getpost(page, type, json) {
         });
       }
       opti.pagetotal = response.data.total;
-      opti.topic_data = response.data.topic;
       PostData.value = [];
       for (let d in response.data.data) {
         PostData.value.push(response.data.data[d]);
@@ -73,8 +72,23 @@ function getpost(page, type, json) {
     }
   });
 }
+
 onMounted(() => {
   getpost(opti.page, "ordinary");
+  let T = new Date().valueOf();
+  if (opti.topic_data == null || T - opti.topic_time > 900000) {
+    axios({
+      url: "/api/getTopic",
+      method: "post",
+    }).then(function (response) {
+      if (response.data.code != 200) {
+        message.error(response.data.msg);
+      } else {
+        opti.topic_time = T;
+        opti.topic_data = response.data.data;
+      }
+    });
+  }
 });
 
 defineExpose({

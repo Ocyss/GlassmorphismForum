@@ -8,15 +8,27 @@
       <n-button type="primary" ghost> 搜索 </n-button>
     </div>
     <div class="navigation">
-      <n-icon size="28">
-        <MoonSharp />
+      <n-icon size="28" class="darkSwitching" @click="opti.theme_toggle()">
+        <MoonSharp v-if="opti.theme == null" />
+        <SunnySharp v-else />
       </n-icon>
-      <n-icon size="28">
-        <PeopleCircleOutline />
-      </n-icon>
-      <n-icon size="28">
-        <MailSharp />
-      </n-icon>
+      <n-popover trigger="hover" raw :show-arrow="false" style="width: 15vw">
+        <template #trigger>
+          <n-icon size="28">
+            <PeopleCircleOutline />
+          </n-icon>
+        </template>
+        <contacts />
+      </n-popover>
+      <n-popover trigger="hover" raw :show-arrow="false" style="width: 15vw">
+        <template #trigger>
+          <n-icon size="28">
+            <MailSharp />
+          </n-icon>
+        </template>
+        <notice />
+      </n-popover>
+
       <personal v-if="islo" @logout="logout" />
       <login v-else @setislo="setislo" />
     </div>
@@ -33,9 +45,14 @@ import {
 import { ref, getCurrentInstance } from "vue";
 import login from "./headers/login.vue";
 import personal from "./headers/personal.vue";
+import contacts from "./headers/contacts.vue";
+import notice from "./headers/notice.vue";
 import { userInfo } from "../store/userInfo";
 import { useRouter } from "vue-router";
 import { useMessage } from "naive-ui";
+import { Options } from "../store/options";
+
+const opti = Options();
 const message = useMessage();
 const router = useRouter();
 const uinfo = userInfo();
@@ -98,5 +115,9 @@ function logout() {
 
 .navigation i {
   margin-right: 25px;
+}
+
+.darkSwitching {
+  cursor: pointer;
 }
 </style>

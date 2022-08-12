@@ -11,18 +11,26 @@
       <div class="name">{{ uinfo.name }}</div>
     </div>
   </n-dropdown>
+  <n-modal
+    v-model:show="Foldershow"
+    style="--n-scrollbar-color-hover: rgba(0, 0, 0, 0)"
+  >
+    <div><folderSettings v-if="Foldershow" /></div>
+  </n-modal>
 </template>
 
 <script setup>
 import { userInfo } from "../../store/userInfo";
+import folderSettings from "./folderSettings.vue";
 import {
   PersonCircleOutline as UserIcon,
-  Pencil as EditIcon,
+  Settings as SettingsIcon,
   LogOutOutline as LogoutIcon,
 } from "@vicons/ionicons5";
 import { h, ref } from "vue";
 import { NIcon } from "naive-ui";
 import { useRouter } from "vue-router";
+const Foldershow = ref(false);
 const router = useRouter();
 const uinfo = userInfo();
 const emit = defineEmits(["logout"]);
@@ -36,6 +44,9 @@ function handleSelect(key) {
         path: "/settings/material",
       });
       window.open(routeUrl.href, "_blank");
+      break;
+    case "folderConfiguration":
+      Foldershow.value = true;
       break;
   }
 }
@@ -53,6 +64,11 @@ const options = ref([
     icon: renderIcon(UserIcon),
   },
   {
+    label: "文件夹配置",
+    key: "folderConfiguration",
+    icon: renderIcon(SettingsIcon),
+  },
+  {
     label: "退出登录",
     key: "logout",
     icon: renderIcon(LogoutIcon),
@@ -65,9 +81,9 @@ const options = ref([
   display: flex;
   justify-content: center;
   align-items: center;
+  user-select: none;
 }
 .personal .name {
   font-size: 1.2rem;
-  user-select: none;
 }
 </style>

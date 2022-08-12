@@ -68,9 +68,11 @@
           v-for="topic in props.pd.topic_id"
           :key="topic"
         >
-          {{ opti.topic_data[topic].name }}
+          {{ opti.topic_data[topic] ? opti.topic_data[topic].name : "" }}
           <template #avatar>
-            <n-avatar :src="opti.topic_data[topic].logo" />
+            <n-avatar
+              :src="opti.topic_data[topic] ? opti.topic_data[topic].logo : ''"
+            />
           </template>
         </n-tag>
       </div>

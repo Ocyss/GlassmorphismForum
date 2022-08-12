@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-
+import { darkTheme } from "naive-ui";
 export const Options = defineStore("Options", {
   id: "Options",
   state: () => {
@@ -14,7 +14,9 @@ export const Options = defineStore("Options", {
       pagetotal: -1,
       commenttotal: -1,
       writepost: false,
-      topic_data: null,
+      topic_data: {},
+      topic_time: 0,
+      theme: null,
     };
   },
   getters: {},
@@ -34,6 +36,13 @@ export const Options = defineStore("Options", {
         this.putAwayrig = "right: 0;";
       }
     },
+    theme_toggle() {
+      if (this.theme == null) {
+        this.theme = darkTheme;
+      } else {
+        this.theme = null;
+      }
+    },
   },
   persist: {
     enabled: true,
@@ -41,7 +50,16 @@ export const Options = defineStore("Options", {
       {
         key: "Options",
         storage: localStorage,
-        paths: ["letstate", "leftwi", "contentwi", "rightwi", "putAwayrig"],
+        paths: [
+          "letstate",
+          "leftwi",
+          "contentwi",
+          "rightwi",
+          "putAwayrig",
+          "topic_data",
+          "topic_time",
+          "theme",
+        ],
       },
     ],
   },

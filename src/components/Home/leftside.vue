@@ -15,15 +15,19 @@
 
 <script setup>
 import { Home, DiamondSharp, Star, FolderOpenOutline } from "@vicons/ionicons5";
+
 import { ref, onMounted, h } from "vue";
 import { NIcon, useMessage } from "naive-ui";
 import axios from "axios";
 import { RouterLink, useRoute } from "vue-router";
 import { userInfo } from "../../store/userInfo";
+import { Options } from "../../store/options";
+const opti = Options();
 const selectedKeyRef = ref("");
 const route = useRoute();
 const uinfo = userInfo();
 const fileList = ref([]);
+const message = useMessage();
 const menuInstRef = ref(null);
 function renderIcon(icon, size = 23, color = "rgb(120,120,120)") {
   return () =>
@@ -88,7 +92,7 @@ function getMyFile() {
     url: "/api/getMyFile",
     method: "get",
   }).then(function (response) {
-    if ((response.data.code = 200)) {
+    if (response.data.code == 200) {
       for (let d of response.data.data) {
         let fileList = {
           label: d.name,
@@ -97,7 +101,7 @@ function getMyFile() {
           children: [],
         };
 
-        for (let l in d.list) {
+        for (let l of d.list) {
           fileList.children.push({
             label: () =>
               h(
@@ -106,13 +110,13 @@ function getMyFile() {
                   to: {
                     name: "home",
                     query: {
-                      topic_id: d.list[l],
+                      topic_id: l,
                     },
                   },
                 },
-                { default: () => l }
+                { default: () => opti.topic_data[l].name }
               ),
-            key: d.list[l].toString(),
+            key: l.toString(),
           });
         }
         personalFolder.value.push(fileList);

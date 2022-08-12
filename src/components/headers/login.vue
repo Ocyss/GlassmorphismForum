@@ -124,7 +124,7 @@ import { ref, getCurrentInstance } from "vue";
 import { useMessage } from "naive-ui";
 import { userInfo } from "../../store/userInfo";
 const uinfo = userInfo();
-window.$message = useMessage();
+const message = useMessage();
 const emit = defineEmits(["setislo"]);
 let showModal = ref(false);
 let loginformRef = ref(null);
@@ -154,7 +154,7 @@ function login() {
       loginlog.value = response.data.msg;
     } else {
       showModal.value = false;
-      window.$message.success(`登陆成功！欢迎回来 ${response.data.data.name}`);
+      message.success(`登陆成功！欢迎回来 ${response.data.data.name}`);
       $cookies.config("1m"); //一个月
       // 设置cookies
       $cookies.set("token", response.data.token);
@@ -177,7 +177,7 @@ function register() {
       if (response.data.code != 200) {
         registerlog.value = response.data.msg;
       } else {
-        window.$message.success(`注册成功！ ${registerformValue.value.user}`);
+        message.success(`注册成功！ ${registerformValue.value.user}`);
         showModal.value = false;
       }
     });

@@ -209,11 +209,7 @@ def getPostList():
         postdata[i]['scang'] = json.loads(postdata[i]['scang'])
         postdata[i]['plun_num'] = plun_num.get(postdata[i]['id'], 0)
 
-    topicData = mc.select_many("SELECT * FROM topic")[1]
-    topics = {}
-    for topic in topicData:
-        topics[topic["id"]] = topic
-    return {"code": 200, "data": json.loads(json.dumps(postdata)), "total": total['total'], "topic": topics}
+    return {"code": 200, "data": json.loads(json.dumps(postdata)), "total": total['total']}
 
 
 @app.route('/getCommentList/', methods=["POST"])
@@ -426,6 +422,20 @@ def getMyFile():
         return {"code": 200, "data": MyFileList}
     else:
         return {"code": 404, "msg": f"没有获取到文件夹配置"}
+
+
+@app.route('/getTopic/', methods=["POST"])
+def getTopic():
+    mc = MysqlClient()
+    cc, topicData = mc.select_many("SELECT * FROM topic")
+
+    if cc == 0:
+        return {"code": 101, "msg": "没有数据"}
+    else:
+        topics = {}
+        for topic in topicData:
+            topics[topic["id"]] = topic
+        return {"code": 200, "data": topics}
 
 
 if __name__ == "__main__":

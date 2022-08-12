@@ -1,20 +1,24 @@
 <template>
-  <n-message-provider>
-    <headers />
-    <n-config-provider
-      :locale="locale"
-      :date-locale="dateLocale"
-      :key="viewKey"
-    >
+  <n-config-provider
+    :locale="locale"
+    :date-locale="dateLocale"
+    :key="viewKey"
+    :theme="opti.theme"
+  >
+    <n-message-provider>
+      <headers @theme_toggle="theme_toggle" />
       <router-view></router-view>
-    </n-config-provider>
-  </n-message-provider>
+    </n-message-provider>
+  </n-config-provider>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import headers from "./components/headers.vue";
 import { zhCN, dateZhCN } from "naive-ui";
+import { Options } from "./store/options";
+
+const opti = Options();
 let dt = new Date();
 const viewKey = ref(dt.getMinutes());
 const locale = ref(zhCN);
