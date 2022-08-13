@@ -1,14 +1,16 @@
 <template>
   <div class="content" id="image-scroll-container">
     <n-button
-      color="rgba(138,43,226,0.7)"
+      strong
+      secondary
       circle
+      type="info"
       class="writepost"
       @click="opti.writepost = true"
     >
       <template #icon>
         <n-icon>
-          <Create />
+          <Brush />
         </n-icon>
       </template>
     </n-button>
@@ -28,7 +30,7 @@
 </template>
 
 <script setup>
-import { Create } from "@vicons/ionicons5";
+import { Brush } from "@vicons/ionicons5";
 import axios from "axios";
 import { useMessage } from "naive-ui";
 import content from "./content.vue";

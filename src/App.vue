@@ -6,7 +6,7 @@
     :theme="opti.theme"
   >
     <n-message-provider>
-      <headers @theme_toggle="theme_toggle" />
+      <headers />
       <router-view></router-view>
     </n-message-provider>
   </n-config-provider>

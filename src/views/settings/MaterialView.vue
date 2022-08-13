@@ -53,6 +53,7 @@
         --n-padding-bottom: 0px;
         height: 100%;
       "
+      class="myPOST"
     >
       <n-tabs
         default-value="mypost"
@@ -61,14 +62,28 @@
         @update:value="toggletype"
       >
         <n-tab-pane name="mypost" tab="我的帖子">
-          未完成！！！！画大饼1
-          <n-menu :options="postOptions" />
+          <content
+            v-for="item in postOptions"
+            :key="item.id"
+            :pd="item"
+            type="material"
+          />
         </n-tab-pane>
         <n-tab-pane name="myzan" tab="我的点赞">
-          <n-menu :options="zanOptions" />
+          <content
+            v-for="item in zanOptions"
+            :key="item.id"
+            :pd="item"
+            type="material"
+          />
         </n-tab-pane>
         <n-tab-pane name="myscang" tab="我的收藏">
-          <n-menu :options="scangOptions" />
+          <content
+            v-for="item in scangOptions"
+            :key="item.id"
+            :pd="item"
+            type="material"
+          />
         </n-tab-pane>
       </n-tabs>
     </n-card>
@@ -79,6 +94,10 @@
 import { userInfo } from "../../store/userInfo";
 import { Female, Male, MaleFemale } from "@vicons/ionicons5";
 import { ref, onMounted } from "vue";
+import axios from "axios";
+import { useMessage } from "naive-ui";
+import content from "../../components/Home/content.vue";
+const message = useMessage();
 const postOptions = ref([]);
 const zanOptions = ref([]);
 const scangOptions = ref([]);
@@ -107,18 +126,32 @@ function gender() {
 function toggletype(value) {
   switch (value) {
     case "myzan":
+      getData("zan");
       break;
     case "myscang":
+      getData("scang");
       break;
   }
 }
 
-function getData() {
-  return "未完成 ";
+function getData(type) {
+  axios.post("/api/getmyPost", { type: type }).then((res) => {
+    if (res.data.code != 200) {
+      message.error(res.data.msg);
+    } else {
+      if (type == "my") {
+        postOptions.value = postOptions.value.concat(res.data.data);
+      } else if (type == "zan") {
+        zanOptions.value = zanOptions.value.concat(res.data.data);
+      } else if (type == "scang") {
+        scangOptions.value = scangOptions.value.concat(res.data.data);
+      }
+    }
+  });
 }
 
 onMounted(() => {
-  getData();
+  getData("my");
 });
 </script>
 
@@ -153,5 +186,11 @@ onMounted(() => {
   width: 110px;
   margin: 10px;
   text-align: center;
+}
+
+.myPOST {
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
 }
 </style>

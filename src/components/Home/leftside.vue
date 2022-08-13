@@ -29,9 +29,9 @@ const uinfo = userInfo();
 const fileList = ref([]);
 const message = useMessage();
 const menuInstRef = ref(null);
-function renderIcon(icon, size = 23, color = "rgb(120,120,120)") {
-  return () =>
-    h(NIcon, { size: size, color: color }, { default: () => h(icon) });
+
+function renderIcon(icon, size = 23) {
+  return () => h(NIcon, { size: size }, { default: () => h(icon) });
 }
 
 const routeNavigation = [

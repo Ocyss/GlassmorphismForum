@@ -177,6 +177,7 @@ def login():
 def getPostList():
     mc = MysqlClient()
     data = request.json
+    check, jwt_decode = checkToken(request.cookies.get("token"))
     sql = """
     SELECT post.userid, post.id, title, type, content
 	, update_time, post_time, `link`, imgs, gender
@@ -205,8 +206,17 @@ def getPostList():
             postdata[i]['content'] = postdata[i]['content'][:399] + '···'
         postdata[i]['imgs'] = json.loads(postdata[i]['imgs'])
         postdata[i]['topic_id'] = json.loads(postdata[i]['topic_id'])
-        postdata[i]['zan'] = json.loads(postdata[i]['zan'])
-        postdata[i]['scang'] = json.loads(postdata[i]['scang'])
+        zan = json.loads(postdata[i]['zan'])
+        scang = json.loads(postdata[i]['scang'])
+
+        postdata[i]['zan_num'] = len(zan)
+        postdata[i]['scang_num'] = len(scang)
+        if check:
+            postdata[i]['zan'] = str(jwt_decode["id"]) in zan
+            postdata[i]['scang'] = str(jwt_decode["id"]) in scang
+        else:
+            postdata[i]['zan'] = False
+            postdata[i]['scang'] = False
         postdata[i]['plun_num'] = plun_num.get(postdata[i]['id'], 0)
 
     return {"code": 200, "data": json.loads(json.dumps(postdata)), "total": total['total']}
@@ -252,7 +262,6 @@ def judge():
     mc = MysqlClient()
     _type = request.args.get('type')
     data = request.args.get('data')
-    print(_type, data)
     if _type == "user":
         if mc.select_one("select * from user where user=%s", data)[0] > 0:
             return {"code": 301, "msg": "已经有该账号了！！", "state": False}
@@ -436,6 +445,51 @@ def getTopic():
         for topic in topicData:
             topics[topic["id"]] = topic
         return {"code": 200, "data": topics}
+
+
+@app.route('/getmyPost/', methods=["POST"])
+def getmyPost():
+    mc = MysqlClient()
+    data = request.json
+    check, jwt_decode = checkToken(request.cookies.get("token"))
+    if not check:
+        return jwt_decode
+    Sql = f'SELECT * FROM `post`,user WHERE JSON_CONTAINS_PATH({data["type"]}, \'one\', \'$."%s"\') AND post.userid = user.id ORDER BY post_time DESC'
+    if data["type"] == "my":
+        cc, PostDATA = mc.select_many(
+            "SELECT * FROM `post`,user WHERE userid=%s AND post.userid = user.id ORDER BY post_time DESC ", jwt_decode["id"])
+    elif data["type"] in ["zan", "scang"]:
+        cc, PostDATA = mc.select_many(Sql, jwt_decode["id"])
+    else:
+        return {"code": 102, "msg": "类型错误"}
+    if cc == 0:
+        return {"code": 101, "msg": "没有数据"}
+    else:
+
+        plun = mc.select_many(
+            "SELECT COUNT(*) AS plun_num, postid FROM `comment` GROUP BY postid")[1]
+        plun_num = {}
+        for i in plun:
+            plun_num[i["postid"]] = i["plun_num"]
+        for i in range(0, len(PostDATA)):
+            del PostDATA[i]['password']
+            if len(PostDATA[i]['content']) > 400:
+                PostDATA[i]['content'] = PostDATA[i]['content'][:399] + '···'
+            PostDATA[i]['imgs'] = json.loads(PostDATA[i]['imgs'])
+            PostDATA[i]['topic_id'] = json.loads(PostDATA[i]['topic_id'])
+            zan = json.loads(PostDATA[i]['zan'])
+            scang = json.loads(PostDATA[i]['scang'])
+
+            PostDATA[i]['zan_num'] = len(zan)
+            PostDATA[i]['scang_num'] = len(scang)
+            if check:
+                PostDATA[i]['zan'] = str(jwt_decode["id"]) in zan
+                PostDATA[i]['scang'] = str(jwt_decode["id"]) in scang
+            else:
+                PostDATA[i]['zan'] = False
+                PostDATA[i]['scang'] = False
+            PostDATA[i]['plun_num'] = plun_num.get(PostDATA[i]['id'], 0)
+        return {"code": 200, "data": PostDATA}
 
 
 if __name__ == "__main__":

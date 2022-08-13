@@ -10,12 +10,7 @@
       size="small"
     >
       <n-tab-pane v-for="panel in panelsRef" :key="panel" :name="panel">
-        <n-transfer
-          ref="transfer"
-          v-model:value="value"
-          :options="options"
-          :render-target-label="renderLabel"
-        />
+        <transfer />
       </n-tab-pane>
     </n-tabs>
   </div>
@@ -24,10 +19,9 @@
 <script setup>
 import { FolderOpenOutline } from "@vicons/ionicons5";
 import { ref, h, computed } from "vue";
-import { NAvatar } from "naive-ui";
 import { Options } from "../../store/options";
+import transfer from "./transfer.vue";
 
-const value = ref([]);
 const TabsValue = ref(1);
 const panelsRef = ref([1, 2, 3, 4, 5]);
 const opti = Options();
@@ -39,15 +33,6 @@ const addableRef = computed(() => {
 const closableRef = computed(() => {
   return panelsRef.value.length > 1;
 });
-
-const options = ref();
-
-// for (let topic in opti.topic_data[(1, 10)]) {
-//   options.value.push({
-//     label: opti.topic_data[topic].name,
-//     value: opti.topic_data[topic].logo,
-//   });
-// }
 
 function handleAdd() {
   const newValue = Math.max(...panelsRef.value) + 1;
@@ -64,40 +49,6 @@ function handleClose(name) {
     TabsValue.value = panels[Math.min(nameIndex, panels.length - 1)];
   }
 }
-
-const renderLabel = function ({ option }) {
-  return h(
-    "div",
-    {
-      style: {
-        display: "flex",
-        margin: "6px 0",
-      },
-    },
-    {
-      default: () => [
-        h(NAvatar, {
-          round: true,
-          src: option.value,
-          size: "small",
-          fallbackSrc:
-            "https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg",
-        }),
-        h(
-          "div",
-          {
-            style: {
-              display: "flex",
-              marginLeft: "6px",
-              alignSelf: "center",
-            },
-          },
-          { default: () => option.label }
-        ),
-      ],
-    }
-  );
-};
 </script>
 
 <style scoped>

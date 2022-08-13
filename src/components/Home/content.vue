@@ -120,13 +120,12 @@ const router = useRouter();
 const opti = Options();
 const uinfo = userInfo();
 const message = useMessage();
-const props = defineProps(["pd"]);
-
-const zan = ref(Object.keys(props.pd.zan).length);
-const scang = ref(Object.keys(props.pd.scang).length);
+const props = defineProps(["pd", "type"]);
+const zan = ref(props.pd.zan_num);
+const scang = ref(props.pd.scang_num);
 const plun = ref(props.pd.plun_num);
-const zans = ref(uinfo.uid in props.pd.zan);
-const scangs = ref(uinfo.uid in props.pd.scang);
+const zans = ref(props.pd.zan);
+const scangs = ref(props.pd.scang);
 
 function jumpTo() {
   let routeUrl = router.resolve({
