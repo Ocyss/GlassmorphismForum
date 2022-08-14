@@ -100,7 +100,6 @@ function getMyFile() {
           icon: renderIcon(FolderOpenOutline, 18),
           children: [],
         };
-
         for (let l of d.list) {
           fileList.children.push({
             label: () =>

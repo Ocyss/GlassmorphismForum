@@ -14,8 +14,12 @@
   <n-modal
     v-model:show="Foldershow"
     style="--n-scrollbar-color-hover: rgba(0, 0, 0, 0)"
+    :close-on-esc="false"
+    :mask-closable="false"
   >
-    <div><folderSettings v-if="Foldershow" /></div>
+    <div>
+      <folderSettings v-if="Foldershow" @cloneModal="Foldershow = false" />
+    </div>
   </n-modal>
 </template>
 
