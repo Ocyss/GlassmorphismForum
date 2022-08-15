@@ -11,21 +11,11 @@
       <div class="name">{{ uinfo.name }}</div>
     </div>
   </n-dropdown>
-  <n-modal
-    v-model:show="Foldershow"
-    style="--n-scrollbar-color-hover: rgba(0, 0, 0, 0)"
-    :close-on-esc="false"
-    :mask-closable="false"
-  >
-    <div>
-      <folderSettings v-if="Foldershow" @cloneModal="Foldershow = false" />
-    </div>
-  </n-modal>
 </template>
 
 <script setup>
 import { userInfo } from "../../store/userInfo";
-import folderSettings from "./folderSettings.vue";
+
 import {
   PersonCircleOutline as UserIcon,
   Settings as SettingsIcon,
@@ -49,9 +39,6 @@ function handleSelect(key) {
       });
       window.open(routeUrl.href, "_blank");
       break;
-    case "folderConfiguration":
-      Foldershow.value = true;
-      break;
   }
 }
 const renderIcon = (icon) => {
@@ -66,11 +53,6 @@ const options = ref([
     label: "用户资料",
     key: "profile",
     icon: renderIcon(UserIcon),
-  },
-  {
-    label: "文件夹配置",
-    key: "folderConfiguration",
-    icon: renderIcon(SettingsIcon),
   },
   {
     label: "退出登录",

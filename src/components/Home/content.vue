@@ -41,8 +41,8 @@
         <n-image-group>
           <n-space>
             <n-image
-              v-for="(src, index) in props.pd.imgs"
-              :key="index"
+              v-for="src in props.pd.imgs"
+              :key="src"
               width="100"
               height="100"
               object-fit="contain"
