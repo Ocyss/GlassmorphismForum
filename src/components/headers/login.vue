@@ -145,7 +145,7 @@ let registerformValue = ref({
 let { ctx: that } = getCurrentInstance();
 
 function login() {
-  var data = axios({
+  axios({
     url: "/api/login",
     method: "post",
     data: loginformValue.value,

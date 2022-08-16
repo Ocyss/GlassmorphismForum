@@ -42,7 +42,7 @@ import {
   SunnySharp,
   MoonSharp,
 } from "@vicons/ionicons5";
-import { ref, getCurrentInstance } from "vue";
+import { ref, getCurrentInstance, onMounted } from "vue";
 import login from "./headers/login.vue";
 import personal from "./headers/personal.vue";
 import contacts from "./headers/contacts.vue";
@@ -51,6 +51,7 @@ import { userInfo } from "../store/userInfo";
 import { useRouter } from "vue-router";
 import { useMessage } from "naive-ui";
 import { Options } from "../store/options";
+import axios from "axios";
 
 const opti = Options();
 const message = useMessage();
@@ -58,7 +59,6 @@ const router = useRouter();
 const uinfo = userInfo();
 const internalInstance = getCurrentInstance();
 const internalData = internalInstance.appContext.config.globalProperties;
-
 let islo = ref(internalData.$cookies.get("token") != null);
 
 function setislo() {
@@ -75,6 +75,30 @@ function logout() {
   uinfo.$reset();
   islo.value = false;
 }
+
+onMounted(() => {
+  if (islo) {
+    if (uinfo.uid == -1) {
+      axios({
+        url: "/api/login",
+        method: "post",
+        data: { type: "token" },
+      }).then(function (response) {
+        if (response.data.code != 200) {
+          $cookies.config("0"); //一个月
+          // 设置cookies
+          if ($cookies.isKey("token")) {
+            $cookies.remove("token");
+          }
+          uinfo.$reset();
+          islo.value = false;
+        } else {
+          uinfo.setUser(response.data.data, internalData.$cookies.get("token"));
+        }
+      });
+    }
+  }
+});
 </script>
 
 <style scoped>

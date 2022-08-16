@@ -1,5 +1,10 @@
 <template>
   <div class="content" id="image-scroll-container">
+    <topicVue
+      v-if="route.query.hasOwnProperty('topic_id')"
+      :topic_id="parseInt(route.query.topic_id)"
+      :key="parseInt(route.query.topic_id)"
+    />
     <n-button
       strong
       secondary
@@ -37,6 +42,7 @@ import content from "./content.vue";
 import { ref, onMounted } from "vue";
 import { Options } from "../../store/options";
 import { useRoute, useRouter } from "vue-router";
+import topicVue from "./topic.vue";
 const router = useRouter();
 const route = useRoute();
 const opti = Options();
@@ -77,20 +83,6 @@ function getpost(page, type, json) {
 
 onMounted(() => {
   getpost(opti.page, "ordinary");
-  let T = new Date().valueOf();
-  if (opti.topic_data == null || T - opti.topic_time > 900000) {
-    axios({
-      url: "/api/getTopic",
-      method: "post",
-    }).then(function (response) {
-      if (response.data.code != 200) {
-        message.error(response.data.msg);
-      } else {
-        opti.topic_time = T;
-        opti.topic_data = response.data.data;
-      }
-    });
-  }
 });
 
 defineExpose({
@@ -114,6 +106,6 @@ defineExpose({
 }
 
 .writepost {
-  margin: 10px 10px 5px 85%;
+  margin: 2px 10px 2px 85%;
 }
 </style>

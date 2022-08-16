@@ -13,16 +13,33 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import headers from "./components/headers.vue";
 import { zhCN, dateZhCN } from "naive-ui";
 import { Options } from "./store/options";
-
+import axios from "axios";
 const opti = Options();
 let dt = new Date();
 const viewKey = ref(dt.getMinutes());
 const locale = ref(zhCN);
 const dateLocale = ref(dateZhCN);
+
+onMounted(() => {
+  let T = new Date().valueOf();
+  if (opti.topic_data == null || T - opti.topic_time > 900000) {
+    axios({
+      url: "/api/getTopic",
+      method: "post",
+    }).then(function (response) {
+      if (response.data.code != 200) {
+        message.error(response.data.msg);
+      } else {
+        opti.topic_time = T;
+        opti.topic_data = response.data.data;
+      }
+    });
+  }
+});
 </script>
 
 <style>

@@ -5,10 +5,10 @@ export const Options = defineStore("Options", {
   state: () => {
     return {
       letstate: true, // 侧栏打开还是关闭
-      leftwi: "width: 0%;",
-      contentwi: "width: 70%;",
-      rightwi: "width: 30%;",
-      putAwayrig: "right: -15px;",
+      leftwi: "width: 17%;",
+      contentwi: "width: 58%;",
+      rightwi: "width: 25%;",
+      putAwayrig: "right: 0px;",
       postid: -1,
       page: 1,
       pagetotal: -1,

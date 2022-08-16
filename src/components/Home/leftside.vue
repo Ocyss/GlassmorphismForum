@@ -93,43 +93,44 @@ function getMyFile() {
     method: "get",
   }).then(function (response) {
     if (response.data.code == 200) {
-      for (let d of response.data.data) {
-        let fileList = {
-          label: d.name,
-          key: d.name,
-          icon: renderIcon(FolderOpenOutline, 18),
-          children: [],
-        };
-        for (let l of d.list) {
-          fileList.children.push({
-            label: () =>
-              h(
-                RouterLink,
-                {
-                  to: {
-                    name: "home",
-                    query: {
-                      topic_id: l,
-                    },
-                  },
-                },
-                { default: () => opti.topic_data[l].name }
-              ),
-            key: l.toString(),
-          });
-        }
-        personalFolder.value.push(fileList);
-      }
-    }
-    if (route.query.hasOwnProperty("topic_id")) {
-      selectedKeyRef.value = route.query.topic_id;
-      menuInstRef.value?.showOption(route.query.topic_id);
+      uinfo.myFile = response.data.data;
     }
   });
 }
 
 onMounted(() => {
   getMyFile();
+  for (let d of uinfo.myFile) {
+    let fileList = {
+      label: d.name,
+      key: d.name,
+      icon: renderIcon(FolderOpenOutline, 18),
+      children: [],
+    };
+    for (let l of d.list) {
+      fileList.children.push({
+        label: () =>
+          h(
+            RouterLink,
+            {
+              to: {
+                name: "home",
+                query: {
+                  topic_id: l,
+                },
+              },
+            },
+            { default: () => opti.topic_data[l].name }
+          ),
+        key: l.toString(),
+      });
+    }
+    personalFolder.value.push(fileList);
+  }
+  if (route.query.hasOwnProperty("topic_id")) {
+    selectedKeyRef.value = route.query.topic_id;
+    menuInstRef.value?.showOption(route.query.topic_id);
+  }
 });
 </script>
 

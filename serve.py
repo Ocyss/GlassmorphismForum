@@ -161,10 +161,21 @@ def login():
     mc = MysqlClient()
     user = request.json.get("user")
     pswd = request.json.get("pswd")
-    cc, data = mc.select_one("SELECT * FROM `user` WHERE `user`=%s", (user))
+    isToken = request.json.get("type") == "token"
+    if isToken:
+        check, jwt_decode = checkToken(request.cookies.get("token"))
+        if not check:
+            return jwt_decode
+        cc, data = mc.select_one("SELECT * FROM `user` WHERE `id`=%s", (jwt_decode["id"]))
+    else:
+        cc, data = mc.select_one("SELECT * FROM `user` WHERE `user`=%s", (user))
     if cc == 0:
         return {"code": 101, "msg": "没有该账号!!"}
-    if check_password_hash(data['password'], pswd):
+
+    if isToken:
+        del data['password']
+        return {"code": 200, "data": data}
+    elif check_password_hash(data['password'], pswd):
         del data['password']
         token = getToken(data['id'], data['user'],
                          data['name'], data['permission'])

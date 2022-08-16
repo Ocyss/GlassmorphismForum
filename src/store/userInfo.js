@@ -14,6 +14,7 @@ export const userInfo = defineStore("storeUser", {
       avatar: "",
       token: "",
       Registration_time: "",
+      myFile: "",
     };
   },
   getters: {},
