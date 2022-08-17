@@ -138,7 +138,6 @@ function jumpTo() {
 }
 
 function actionClick(type) {
-  console.log(uinfo.token);
   if (uinfo.token === "") {
     message.error("孩子你还没登陆呢，在想什么呢？？");
   } else {

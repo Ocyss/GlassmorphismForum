@@ -1,10 +1,12 @@
 import json
 import datetime
 import os
+from re import ASCII
 import pymysql
 import jwt
 import time
 from flask import Flask, request, make_response, jsonify
+from pymysql.converters import escape_string
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from dbutils.pooled_db import PooledDB
@@ -296,7 +298,7 @@ def operate():
         if not data.get("isCancel"):  # 添加
             # Key为用户id,value为时间戳
             sql = f"UPDATE post set {_type}=JSON_INSERT({_type}, '$.\"%s\"','%s' ) WHERE id=%s"
-            if mc.insert_one(sql, (jwt_decode["id"], Times(), data.get("postid")))[0]:
+            if mc.update_one(sql, (jwt_decode["id"], Times(), data.get("postid")))[0]:
                 return {"code": 200, "msg": f"{_type}帖子点赞成功", "ty": "add"}
             else:
                 return {"code": 201, "msg": f"{_type}数据库错误", "ty": "add"}
@@ -304,7 +306,7 @@ def operate():
         elif data.get("isCancel"):  # 取消
             # Key为用户id,value为时间戳
             sql = f"UPDATE post set {_type}=json_remove({_type}, '$.\"%s\"') WHERE id=%s"
-            if mc.insert_one(sql, (jwt_decode["id"], data.get("postid")))[0]:
+            if mc.update_one(sql, (jwt_decode["id"], data.get("postid")))[0]:
                 return {"code": 200, "msg": f"{_type}取消成功", "ty": "re"}
             else:
                 return {"code": 201, "msg": f"{_type}数据库错误", "ty": "re"}
@@ -314,28 +316,22 @@ def operate():
             return {"code": 500, "msg": "不能对自己帖子进行操作哦！"}
 
         if not data.get("isCancel"):  # 添加
-            # sql = """
-            # UPDATE `forum`.`comment` SET
-            #     `zan` = json_array_append(`zan`,'$', CAST('{"uid": %s,"date": %s}' AS JSON))
-            #     WHERE `id` = %s;
-            # """
             sql = """
-            UPDATE `forum`.`comment` SET 
+            UPDATE `forum`.`comment` SET
             `zan` = JSON_INSERT(`zan`,'$.\"%s\"','%s') WHERE `id` = %s;
             """
-            if mc.insert_one(sql, (jwt_decode["id"], Times(), data.get("commentid")))[0]:
+            if mc.update_one(sql, (jwt_decode["id"], Times(), data.get("commentid")))[0]:
                 return {"code": 200, "msg": f"{_type}评论点赞成功", "ty": "add"}
             else:
                 return {"code": 201, "msg": f"{_type}数据库错误", "ty": "add"}
 
         elif data.get("isCancel"):  # 取消
             sql = """
-            UPDATE `forum`.`comment` SET 
-                `zan` = json_array_append(`zan`,'$', CAST('{"uid": %s,"date": %s}' AS JSON))
-                WHERE `id` = %s;
+            UPDATE `forum`.`comment` SET
+            `zan` = json_remove(`zan`,'$.\"%s\"') WHERE `id` = %s;
             """
-            if mc.insert_one(sql, (jwt_decode["id"], Times(), data.get("commentid")))[0]:
-                return {"code": 200, "msg": f"{_type}评论点赞成功", "ty": "re"}
+            if mc.update_one(sql, (jwt_decode["id"], data.get("commentid")))[0]:
+                return {"code": 200, "msg": f"{_type}评论取消成功", "ty": "re"}
             else:
                 return {"code": 201, "msg": f"{_type}数据库错误", "ty": "re"}
 
@@ -476,7 +472,6 @@ def getmyPost():
     if cc == 0:
         return {"code": 101, "msg": "没有数据"}
     else:
-
         plun = mc.select_many(
             "SELECT COUNT(*) AS plun_num, postid FROM `comment` GROUP BY postid")[1]
         plun_num = {}
@@ -501,6 +496,29 @@ def getmyPost():
                 PostDATA[i]['scang'] = False
             PostDATA[i]['plun_num'] = plun_num.get(PostDATA[i]['id'], 0)
         return {"code": 200, "data": PostDATA}
+
+
+@app.route('/upMyFile/', methods=["POST"])
+def upMyFile():
+    mc = MysqlClient()
+    data = request.json
+    check, jwt_decode = checkToken(request.cookies.get("token"))
+    if not check:
+        return jwt_decode
+    if not data.get("FileName") or not data.get("topic_id"):
+        return {"code": 104, "msg": "缺少必要参数"}
+    if data.get("type") == "remove":
+        mc.update_one("UPDATE `uconfig` SET `data`=JSON_REMOVE(`data`, %s) WHERE `uid`=%s AND `type`='myFile'",
+                      (f'$."{data.get("FileName")}"[{data.get("topic_id")}]', jwt_decode['id']))
+        return {"code": 200, "msg": "删除成功"}
+    elif data.get("type") == "newFile":
+        mc.update_one("UPDATE `uconfig` SET `data`=JSON_INSERT(`data`, %s ,JSON_ARRAY()) WHERE `uid`=%s AND `type`='myFile'",
+                      (f'$."{data.get("FileName")}"', jwt_decode['id']))
+        return {"code": 200, "msg": "文件夹添加成功"}
+    elif data.get("type") == "add":
+        mc.update_one("UPDATE `uconfig` SET `data`=json_array_insert(`data`, %s,%s) WHERE `uid`=%s AND `type`='myFile'",
+                      (f'$."{data.get("FileName")}"[9999]', data.get("topic_id"), jwt_decode['id']))
+        return {"code": 200, "msg": "关注成功"}
 
 
 if __name__ == "__main__":

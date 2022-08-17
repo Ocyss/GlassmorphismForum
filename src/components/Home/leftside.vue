@@ -15,9 +15,8 @@
 
 <script setup>
 import { Home, DiamondSharp, Star, FolderOpenOutline } from "@vicons/ionicons5";
-
 import { ref, onMounted, h } from "vue";
-import { NIcon, useMessage } from "naive-ui";
+import { NIcon, useMessage, NMenu } from "naive-ui";
 import axios from "axios";
 import { RouterLink, useRoute } from "vue-router";
 import { userInfo } from "../../store/userInfo";
@@ -93,21 +92,21 @@ function getMyFile() {
     method: "get",
   }).then(function (response) {
     if (response.data.code == 200) {
-      uinfo.myFile = response.data.data;
+      uinfo.$patch({ myFile: response.data.data });
     }
   });
 }
 
 onMounted(() => {
   getMyFile();
-  for (let d of uinfo.myFile) {
+  for (let FileName in uinfo.myFile) {
     let fileList = {
-      label: d.name,
-      key: d.name,
+      label: FileName,
+      key: FileName,
       icon: renderIcon(FolderOpenOutline, 18),
       children: [],
     };
-    for (let l of d.list) {
+    for (let l of uinfo.myFile[FileName]) {
       fileList.children.push({
         label: () =>
           h(
