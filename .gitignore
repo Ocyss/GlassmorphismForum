@@ -11,7 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-files
+back-end/files
 files.rar
 .history
 # Editor directories and files
